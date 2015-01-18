@@ -80,8 +80,8 @@ class Frange(object):
     # ------------------------------------------------------------------------
     @property
     def continuous(self):
-        groups = _frames_to_groups(self._frames)
-        return len(groups) == 1 and groups[0].step == 1
+        segments = _frames_to_segments(self._frames)
+        return len(segments) == 1 and segments[0].step == 1
 
     # ------------------------------------------------------------------------
     @property
@@ -96,11 +96,13 @@ class Frange(object):
     # ------------------------------------------------------------------------
     @property
     def subfranges(self):
-        for frame_group in _frames_to_groups(self.frames):
-            yield Frange(frame_group[0])
+        for segment in _frames_to_segments(self.frames):
+            yield Frange(segment.frames)
 
 # ----------------------------------------------------------------------------
-class _FrameGroup(object):
+
+# ----------------------------------------------------------------------------
+class _FrameSegment(object):
 
     # ------------------------------------------------------------------------
     def __init__(self, frames, step):
@@ -132,7 +134,7 @@ def _frames_from_arg(frames_arg, frame_type=int):
     return frames
 
 # ----------------------------------------------------------------------------
-def _frames_to_groups(frames):
+def _frames_to_segments(frames):
 
     # eliminate duplicates
     frames = sorted(list(set(frames)))
@@ -140,47 +142,47 @@ def _frames_to_groups(frames):
     # calculate all possible steps between the frames
     steps = [frames[f] - frames[f-1] for f in _range(1, len(frames))]
 
-    frame_groups = []
+    segments = []
 
     # for each step, in order...
     for step in set(steps):
             
-        groups_found = True
+        segments_found = True
 
-        while groups_found:
+        while segments_found:
     
-            num_groups = 0
+            num_segments = 0
 
-            # group the frames based on their offset from a matching stepped count
-            # str() to allow float differences to group
+            # segment the frames based on their offset from a matching stepped count
+            # str() to allow float differences to segment
             for key, group in groupby(frames, lambda f,c=count(step=step): str(next(c)-f)):
 
                 # only count ranges of 3 or more frames
-                group_frames = list(group)
+                segment_frames = list(group)
 
-                if len(group_frames) > 2:
-                    num_groups += 1
-                    frame_groups.append(_FrameGroup(group_frames, step))
-                    for f in group_frames:
+                if len(segment_frames) > 2:
+                    num_segments += 1
+                    segments.append(_FrameSegment(segment_frames, step))
+                    for f in segment_frames:
                         frames.remove(f)
 
-            groups_found = True if num_groups > 0 else False
+            segments_found = True if num_segments > 0 else False
 
     for frame in frames:
-        frame_groups.append(_FrameGroup([frame], 1))
+        segments.append(_FrameSegment([frame], 1))
 
-    return sorted(frame_groups, key=lambda f:f.frames[0])
+    return sorted(segments, key=lambda f:f.frames[0])
 
 # ----------------------------------------------------------------------------
 def _frames_to_spec(frames, separator=Frange.separator):
 
-    frame_groups = _frames_to_groups(frames)
+    segments = _frames_to_segments(frames)
 
     frange_list = []
-    for frame_group in frame_groups:
+    for segment in segments:
 
-        frames = frame_group.frames
-        step = frame_group.step
+        frames = segment.frames
+        step = segment.step
 
         if len(frames) == 1:
             frange_list.append(str(frames[0]))
