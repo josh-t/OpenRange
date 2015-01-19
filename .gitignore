@@ -1,0 +1,19 @@
+
+# Ignore compiled python files
+*.py[cod]
+
+# Ignore vim temporary and swap files
+*~
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+
+# Documentation build
+docs/build
+
+# Setuptools artifacts
+*.egg
+*.egg-info
+dist/*
+
+# Tox artifacts
+.tox
