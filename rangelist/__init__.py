@@ -1,4 +1,5 @@
 
 __version__ == 0.0.1
 
-from .frange import Frange
+from .rangelist import RangeList
+

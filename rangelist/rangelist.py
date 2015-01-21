@@ -159,19 +159,14 @@ class _Range(object):
         stop = Decimal(self.stop)
         step = Decimal(self.step)
 
-        # XXX should be able to do this without conditional
-
         if i == stop:
             yield _num_from_str(str(i))
-        elif stop > start:
-            while i <= stop:
-                yield _num_from_str(str(i))
-                i += step
         else:
-            while i >= stop:
-                yield _num_from_str(str(i))
-                i += step
-
+            num_steps = (stop - start) / step
+            for i in range(0, num_steps + 1):
+                item = (i * step) + start
+                yield _num_from_str(str(item))
+            
     # ------------------------------------------------------------------------
     @property
     def spec(self):
@@ -296,7 +291,7 @@ def _ranges_from_items(items):
 
     It uses an algorithm extrapolated from a simpler case outlined here:
        
-        # XXX
+        http://stackoverflow.com/questions/3429510/pythonic-way-to-convert-a-list-of-integers-into-a-string-of-comma-separated-range/3430231#3430231
 
     The basic idea below is to identify a set of all possible steps between
     the sorted list of items. For example, given a list of items:
@@ -466,4 +461,8 @@ if __name__ == "__main__":
     print str(f8)
     f8.compact()
     print str(f8)
+
+    f9 = RangeList("10-1:-1")
+    print str(f9)
+    print str(list(f9))
 
