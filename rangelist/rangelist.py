@@ -130,15 +130,27 @@ class RangeList(MutableSequence):
 
 # ----------------------------------------------------------------------------
 class Range(object):
+    # XXX
 
     # ------------------------------------------------------------------------
     # special methods:
     # ------------------------------------------------------------------------
     def __eq__(self, other):
+        """Equality comparison between two Range objects.
+
+        Returns True if the set of items in each list are the same.
+
+        """
         return set(list(self)) == set(list(other))
 
     # ------------------------------------------------------------------------
     def __init__(self, start, stop=None, step=None):
+        """Constructor.
+
+        :raises: ValueError if the step evaluates to False.
+
+        """
+
         self._start = start
         self._stop = stop if stop is not None else start
         self._step = step if step is not None else 1
@@ -148,10 +160,33 @@ class Range(object):
 
     # ------------------------------------------------------------------------
     def __iter__(self):
+        """An iterator for the items in this range.
+
+        Example: 
+
+            >>> rng = Range(1, 10, 2)
+            >>> for i in rng:
+            >>>    print str(i),
+            1 3 5 7 9
+
+
+        """
         return self.items
 
     # ------------------------------------------------------------------------
     def __str__(self):
+        """Returns a string representation of the range.
+        
+        Example:
+            
+            >>> rng = Range(1, 20, 2)
+            >>> str(rng)
+            "1-20:2"
+
+        See also: Range.spec
+        
+        """
+
         return self.spec
 
     # ------------------------------------------------------------------------
@@ -159,7 +194,18 @@ class Range(object):
     # ------------------------------------------------------------------------
     @property
     def items(self):
-        """A generator function that yields all items for this range."""
+        """A generator function that yields all items for this range.
+        
+        Example:
+
+            >>> rng = Range(1, 10, 2)
+            >>> for i in rng.items:
+            >>>    print str(i),
+            1 3 5 7 9
+
+        See also: Range.__iter__
+        
+        """
 
         # handle all math as decimal operations to avoid floating point 
         # precision issues 
@@ -179,6 +225,12 @@ class Range(object):
     # ------------------------------------------------------------------------
     @property
     def spec(self):
+        """(str) representation of this range.
+
+        Of the form {start}-{stop}:{step}. If the step is 1, it will not be
+        included.
+
+        """
 
         (start, stop, step) = map(str, [self.start, self.stop, self.step])
         
@@ -194,17 +246,33 @@ class Range(object):
     # ------------------------------------------------------------------------
     @property
     def start(self):
+        """The start value for this range."""
         return self._start
 
     # ------------------------------------------------------------------------
     @property
     def step(self):
+        """The step value for this range."""
         return self._step
 
     # ------------------------------------------------------------------------
     @property
     def stop(self):
+        """The stop value for this range."""
         return self._stop
+
+# ----------------------------------------------------------------------------
+# public functions:
+# ----------------------------------------------------------------------------
+def irange(start, stop=None, step=None):
+    """Similar to the built-in range(), but returns an inclusive iterator.
+    
+    >>> for i in irange(0, 10):
+    >>>     print str(i),
+    0 1 2 3 4 5 6 7 8 9 10
+    
+    """
+    return Range(start, stop=stop, step=step)
 
 # ----------------------------------------------------------------------------
 # private functions:
@@ -221,21 +289,17 @@ def _num_from_str(item_str, default=None):
         return default
 
     # Rely on the fact that attempting to convert a string that represents a
-    # float in pyhton will raise ValueError. This is still not ideal due to 
-    # floating point precision problems. 
+    # float in pyhton will raise ValueError.
     try:
         num = int(item_str)
     except ValueError:
         num = float(item_str)
 
-    # TODO: consider use decimal.Decimal for all numbers. Not sure users would
-    # want decimal objects returned when iterating over items though. 
-    # Somebody smart should propose a good solution.
-
     return num
 
 # ----------------------------------------------------------------------------
 def _range_from_arg(range_arg):
+    """Convert a single range arg to a Range object."""
     
     _ranges = _ranges_from_arg(range_arg)
 
@@ -281,7 +345,7 @@ def _ranges_from_arg(ranges_arg):
     elif isinstance(ranges_arg, Number):
         ranges.append(Range(ranges_arg))
 
-    # list of one or more of the above types
+    # assume a list of one or more of the above types
     else:
         for arg in ranges_arg:
             ranges.extend(_ranges_from_arg(arg))
@@ -426,50 +490,3 @@ def _ranges_from_spec(spec):
 
     return ranges
         
-# ----------------------------------------------------------------------------
-if __name__ == "__main__":
-
-    f1 = RangeList()
-    assert str(f1) == ""
-    assert f1.continuous == False
-    assert list(f1.items) == []
-    print str(f1)
-
-    f2 = RangeList("1.0-2.5:.5")
-    print str(f2)
-    print str(list(f2.items))
-    assert str(f2) == "1.0-2.5:0.5"
-    assert f2.continuous == False
-    assert list(f2.items) == [1.0, 1.5, 2.0, 2.5]
-
-    f3 = RangeList("10-30:2")
-    print str(f3)
-    assert str(f3) == "10-30:2"
-    assert f3.continuous == False
-    assert list(f3.items) == [10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30]
-
-    f4 = RangeList("1-50:2,25-75:2", separator=", ")
-    print str(f4)
-    f4.compact()
-    print str(f4)
-
-    f5 = RangeList("1-100")
-    assert f5.continuous == True
-    print str(f5)
-
-    f6 = RangeList([1, 2, "1-10:3", "-10-20:5", RangeList("11-33:11"), "2.4-9.6:2.4"])
-    print str(f6)
-    print str(list(f6.items))
-
-    f7 = f3 + f5
-    print str(f7)
-
-    f8 = RangeList([1.1, 2.2, 3.3, 4.4, 5.5])
-    print str(f8)
-    f8.compact()
-    print str(f8)
-
-    f9 = RangeList("10-1:-1")
-    print str(f9)
-    print str(list(f9))
-
