@@ -3,6 +3,7 @@
 # imports:
 # ----------------------------------------------------------------------------
 
+from collections import MutableSequence
 from copy import deepcopy
 from decimal import Decimal
 from itertools import count, groupby
@@ -26,8 +27,8 @@ SPEC_SEPARATOR_REGEX = re.compile("\s*,\s*")
 # ----------------------------------------------------------------------------
 # classes:
 # ----------------------------------------------------------------------------
-class RangeList(object):
-    """Stores an ordered list of numerical items, specified as ranges."""
+class RangeList(MutableSequence):
+    """An iterable list of of range specifications."""
 
     separator = ','
 
@@ -35,9 +36,13 @@ class RangeList(object):
     # special methods:
     # ------------------------------------------------------------------------
     def __add__(self, other):
-        new_range_list = RangeList(list(self._ranges))
-        new_range_list.add(other) 
+        new_range_list = RangeList(list(self.ranges))
+        new_range_list.extend(other)
         return new_range_list
+
+    # ------------------------------------------------------------------------
+    def __delitem__(self, index):
+        del self._ranges[index]
 
     # ------------------------------------------------------------------------
     def __init__(self, ranges_arg=None, separator=None):
@@ -46,46 +51,62 @@ class RangeList(object):
         self._separator = separator \
             if separator is not None else self.__class__.separator
         if ranges_arg:
-            self.add(ranges_arg)
+            self.extend(ranges_arg)
+
+    # ------------------------------------------------------------------------
+    def __getitem__(self, index):
+        return self._ranges[index]
+
+    # ------------------------------------------------------------------------
+    def __iadd__(self, other):
+        self.extend(other)
+        return self
 
     # ------------------------------------------------------------------------
     def __iter__(self):
         return self.items
 
     # ------------------------------------------------------------------------
+    def __len__(self):
+        return len(self._ranges)
+
+    # ------------------------------------------------------------------------
+    def __setitem__(self, index, range_arg):
+        self._ranges[index] = _range_from_arg(range_arg)
+
+    # ------------------------------------------------------------------------
     def __str__(self):
         return self._separator.join([_range.spec for _range in self._ranges])
 
     # ------------------------------------------------------------------------
-    def __sub__(self, other):
-        new_range_list = RangeList(list(self._ranges))
-        new_range_list.remove(other)
-        return new_range_list
-
-    # ------------------------------------------------------------------------
     # methods:
     # ------------------------------------------------------------------------
-    def add(self, ranges_arg):
-        _ranges = _ranges_from_arg(ranges_arg)
-        self._ranges.extend(_ranges)
-
+    def append(self, range_arg):
+        self._ranges.append(_range_from_arg(range_arg))
+    
     # ------------------------------------------------------------------------
     def compact(self):
         self._ranges = _ranges_from_items(list(self.items))
 
     # ------------------------------------------------------------------------
-    def remove(self, ranges_arg):
-        updated_ranges = []
-        ranges_to_remove = _ranges_from_arg(ranges_arg)
-        items_to_remove = list(
-            set(_items_from_ranges(ranges_to_remove))
-        )
-        for _range in self._ranges:
-            new_ranges = _Range.remove(_range, items_to_remove)
-            if new_ranges:
-                updated_ranges.extend(new_ranges)
+    def extend(self, ranges_arg):
+        self._ranges.extend(_ranges_from_arg(ranges_arg))
 
-        self._ranges = updated_ranges
+    # ------------------------------------------------------------------------
+    def insert(self, index, range_arg):
+        self._ranges.insert(index, _range_from_arg(range_arg))
+
+    # ------------------------------------------------------------------------
+    def pop(self, index):
+        return self._ranges.pop(index)
+
+    # ------------------------------------------------------------------------
+    def remove(self, range_arg):
+        self._ranges.remove(_range_from_arg(range_arg))
+
+    # ------------------------------------------------------------------------
+    def reverse(self):
+        self._ranges.reverse() 
 
     # ------------------------------------------------------------------------
     # properties
@@ -98,7 +119,7 @@ class RangeList(object):
     @property
     def ranges(self):
         for _range in self._ranges:
-            yield RangeList(deepcopy(_range))
+            yield deepcopy(_range)
 
     # ------------------------------------------------------------------------
     @property
@@ -108,25 +129,14 @@ class RangeList(object):
                 yield item
 
 # ----------------------------------------------------------------------------
-# private classes:
-# ----------------------------------------------------------------------------
-class _Range(object):
-
-    # ------------------------------------------------------------------------
-    # class methods:
-    # ------------------------------------------------------------------------
-    @classmethod
-    def remove(cls, _range, items_to_remove):
-
-        # XXX remove items from each range individually
-
-        new_ranges = []
-        cur_items = list(_range)
-        new_items = [i for i in cur_items if not i in items_to_remove]
-        return _ranges_from_items(new_items)
+class Range(object):
 
     # ------------------------------------------------------------------------
     # special methods:
+    # ------------------------------------------------------------------------
+    def __eq__(self, other):
+        return set(list(self)) == set(list(other))
+
     # ------------------------------------------------------------------------
     def __init__(self, start, stop=None, step=None):
         self._start = start
@@ -152,12 +162,9 @@ class _Range(object):
         """A generator function that yields all items for this range."""
 
         # handle all math as decimal operations to avoid floating point 
-        # issues. below, when the item is yielded, it is first converted to
-        # a string representation, then to either an int or float. 
-        i = Decimal(self.start)
-        start = Decimal(self.start)
-        stop = Decimal(self.stop)
-        step = Decimal(self.step)
+        # precision issues 
+        (i, start, stop, step) = map(Decimal, 
+            [self.start, self.start, self.stop, self.step])
 
         if i == stop:
             yield _num_from_str(str(i))
@@ -165,21 +172,21 @@ class _Range(object):
             num_steps = (stop - start) / step
             for i in range(0, num_steps + 1):
                 item = (i * step) + start
+
+                # convert back to float or int from decimal before yielding
                 yield _num_from_str(str(item))
             
     # ------------------------------------------------------------------------
     @property
     def spec(self):
 
-        start = str(self.start)
-        stop = str(self.stop)
-        step = str(self.step)
+        (start, stop, step) = map(str, [self.start, self.stop, self.step])
         
         if start == stop:
             spec = start
         else:
             spec = "{start}-{stop}".format(start=start, stop=stop)
-            if step != "1" and step != "1.0":
+            if self.step != 1:
                 spec += ":" + step
 
         return spec
@@ -201,14 +208,6 @@ class _Range(object):
 
 # ----------------------------------------------------------------------------
 # private functions:
-# ----------------------------------------------------------------------------
-def _items_from_ranges(ranges):
-    
-    items = []
-    for _range in ranges:
-        items.extend(list(_range))
-    return items
-
 # ----------------------------------------------------------------------------
 def _num_from_str(item_str, default=None):
     """Converts a given item string into a number.
@@ -236,6 +235,18 @@ def _num_from_str(item_str, default=None):
     return num
 
 # ----------------------------------------------------------------------------
+def _range_from_arg(range_arg):
+    
+    _ranges = _ranges_from_arg(range_arg)
+
+    if len(_ranges) < 1:
+        raise ValueError("Could not determine range from: " + str(range_arg))
+    elif len(_ranges) > 1:
+        raise ValueError("Found multiple ranges for: " + str(range_arg))
+    else:
+        return _ranges[0]
+
+# ----------------------------------------------------------------------------
 def _ranges_from_arg(ranges_arg):
     """Given a supported argument type, convert it into a list of ranges.
 
@@ -259,7 +270,7 @@ def _ranges_from_arg(ranges_arg):
         ranges.extend([deepcopy(s) for s in ranges_arg._ranges])
 
     # _Range
-    elif isinstance(ranges_arg, _Range):
+    elif isinstance(ranges_arg, Range):
         ranges.append(deepcopy(ranges_arg))
 
     # string spec
@@ -268,7 +279,7 @@ def _ranges_from_arg(ranges_arg):
 
     # number
     elif isinstance(ranges_arg, Number):
-        ranges.append(_Range(ranges_arg))
+        ranges.append(Range(ranges_arg))
 
     # list of one or more of the above types
     else:
@@ -361,7 +372,7 @@ def _ranges_from_items(items):
                     num_ranges += 1
 
                     # create the range
-                    ranges.append(_Range(
+                    ranges.append(Range(
                         range_items[0], 
                         stop=range_items[-1], 
                         step=step)
@@ -378,7 +389,7 @@ def _ranges_from_items(items):
 
     # for any remaining items, create single item range.
     for item in items:
-        ranges.append(_Range(item))
+        ranges.append(Range(item))
 
     # return the sorted list of ranges based on the start item
     return sorted(ranges, key=lambda r:r.start)
@@ -406,7 +417,7 @@ def _ranges_from_spec(spec):
             stop = _num_from_str(match.group(3), default=start)
             step = _num_from_str(match.group(5), default=1)
 
-            ranges.append(_Range(start, stop=stop, step=step))
+            ranges.append(Range(start, stop=stop, step=step))
         else:
             raise SyntaxError(
                 "Unable to parse range specification: '{s}'".\
@@ -450,12 +461,8 @@ if __name__ == "__main__":
     print str(f6)
     print str(list(f6.items))
 
-    f7 = f5 - f3
+    f7 = f3 + f5
     print str(f7)
-    for r in f7.ranges:
-        print str(r)
-    for r in f7.ranges:
-        print str(r)
 
     f8 = RangeList([1.1, 2.2, 3.3, 4.4, 5.5])
     print str(f8)
