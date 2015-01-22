@@ -1,5 +1,5 @@
 
-rangelist - An iterable list of range specifications.
-=====================================================
+rangelist
+=========
 
 docs to follow...
