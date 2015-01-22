@@ -71,12 +71,18 @@ class RangeList(MutableSequence):
         return len(self._ranges)
 
     # ------------------------------------------------------------------------
+    def __repr__(self):
+        return '{cls}("{spec}")'.format(
+            cls=self.__class__.__name__, spec=str(self)
+        )
+
+    # ------------------------------------------------------------------------
     def __setitem__(self, index, range_arg):
         self._ranges[index] = _range_from_arg(range_arg)
 
     # ------------------------------------------------------------------------
     def __str__(self):
-        return self._separator.join([_range.spec for _range in self._ranges])
+        return self._separator.join([str(_range) for _range in self._ranges])
 
     # ------------------------------------------------------------------------
     # methods:
@@ -156,7 +162,7 @@ class Range(object):
         self._step = step if step is not None else 1
 
         if not self._step:
-            raise ValueError("Invalid step: " + self.spec)
+            raise ValueError("Invalid step: " + str(self))
 
     # ------------------------------------------------------------------------
     def __iter__(self):
@@ -174,20 +180,38 @@ class Range(object):
         return self.items
 
     # ------------------------------------------------------------------------
+    def __repr__(self):
+        """Return a unique representation of this Range object."""
+
+        return '{cls}("{spec}")'.format(
+            cls=self.__class__.__name__, spec=str(self)
+        )
+
+    # ------------------------------------------------------------------------
     def __str__(self):
         """Returns a string representation of the range.
         
+        Returned string will be of the form {start}-{stop}:{step}. If the step
+        is 1, it will not be included.
+
         Example:
             
             >>> rng = Range(1, 20, 2)
             >>> str(rng)
             "1-20:2"
 
-        See also: Range.spec
-        
         """
 
-        return self.spec
+        (start, stop, step) = map(str, [self.start, self.stop, self.step])
+        
+        if start == stop:
+            spec = start
+        else:
+            spec = "{start}-{stop}".format(start=start, stop=stop)
+            if self.step != 1:
+                spec += ":" + step
+
+        return spec
 
     # ------------------------------------------------------------------------
     # properties:
@@ -222,27 +246,6 @@ class Range(object):
                 # convert back to float or int from decimal before yielding
                 yield _num_from_str(str(item))
             
-    # ------------------------------------------------------------------------
-    @property
-    def spec(self):
-        """(str) representation of this range.
-
-        Of the form {start}-{stop}:{step}. If the step is 1, it will not be
-        included.
-
-        """
-
-        (start, stop, step) = map(str, [self.start, self.stop, self.step])
-        
-        if start == stop:
-            spec = start
-        else:
-            spec = "{start}-{stop}".format(start=start, stop=stop)
-            if self.step != 1:
-                spec += ":" + step
-
-        return spec
-
     # ------------------------------------------------------------------------
     @property
     def start(self):
