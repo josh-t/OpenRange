@@ -20,14 +20,26 @@ __all__ = [
 # globals:
 # ----------------------------------------------------------------------------
 
-# Optionally signed int or float
-ITEM_SPEC = "-?\d*\.?\d*"
 
-# Range specification. Can be a single numeric item or a range of items
-# indicated by the '-' separator. An optional step can also be supplied.
+# Optionally signed int or float
+NUM_SPEC = "([+-]?(\d+\.?|\d*\.\d+))"
+
+# Range specification
 RANGE_SPEC_REGEX = re.compile(
-    "^({i})(-?({i})(:({i}))?)?$".format(i=ITEM_SPEC)
+    "^(({i})|({i}-{i})|({i}-{i}:{i}))$".format(i=NUM_SPEC)
 )
+#    Match positions for RANGE_SPEC_REGEX:
+#
+#        0 = entire match
+#        1 = single frame match
+#        4 = start-stop (no step) match
+#        5 = start if 4
+#        7 = stop if 4
+#        9 = start-stop:step match
+#        10 = start if 9
+#        12 = stop if 9
+#        14 = step if 9
+#
 
 # A separator regex for parsing a list of range specifications
 SPEC_SEPARATOR_REGEX = re.compile("\s*,\s*")
@@ -354,16 +366,13 @@ class RangeList(MutableSequence):
             yield _range
 
 # ----------------------------------------------------------------------------
-def _str_to_num(item_str, default=None):
+def _str_to_num(item_str):
     """Converts a given item string into a number.
 
     Also accepts a default value if the supplied item string is None.
 
 
     """
-
-    if item_str in [None, '']:
-        return default
 
     # Rely on the fact that attempting to convert a string that represents a
     # float in pyhton will raise ValueError.
@@ -528,6 +537,44 @@ def _items_to_ranges(items):
     return sorted(ranges, key=lambda r:r.start)
 
 # ----------------------------------------------------------------------------
+def _parse_range_str(range_str):
+    """Parse a given range string into (start, stop, and step)
+
+    See comments about match positions where RANGE_SPEC_REGEX is defined.
+
+    """
+    
+    (start, stop, step) = (None, None, 1)
+
+    match = RANGE_SPEC_REGEX.match(range_str)
+
+    if match:
+
+        groups = match.groups()
+
+        if groups[1] is not None:
+            start = groups[1] 
+            stop = groups[1]
+        elif groups[4] is not None:
+            start = groups[5]
+            stop = groups[7]
+        else:
+            start = groups[10] 
+            stop = groups[12]
+            step = groups[14]
+
+        # convert each to a number
+        (start, stop, step) = map(_str_to_num, [start, stop, step])
+
+    else:
+        raise SyntaxError(
+            "Unable to parse range specification: '{s}'".\
+                format(s=range_str)
+        )
+
+    return (start, stop, step)
+
+# ----------------------------------------------------------------------------
 def _spec_to_ranges(spec):
     """Return _Ranges for a given spec string.
 
@@ -541,21 +588,8 @@ def _spec_to_ranges(spec):
 
     for range_str in SPEC_SEPARATOR_REGEX.split(spec):
 
-        match = RANGE_SPEC_REGEX.match(range_str)
-
-        if match:
-
-            # make sure each of these has a value.
-            start = _str_to_num(match.group(1))
-            stop = _str_to_num(match.group(3), default=start)
-            step = _str_to_num(match.group(5), default=1)
-
-            ranges.append(Range(start, stop=stop, step=step))
-        else:
-            raise SyntaxError(
-                "Unable to parse range specification: '{s}'".\
-                    format(s=range_str)
-            )
+        (start, stop, step) = _parse_range_str(range_str)
+        ranges.append(Range(start, stop=stop, step=step))
 
     return ranges
 
