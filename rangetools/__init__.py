@@ -5,7 +5,7 @@ from .funcs import irange, range_str
 # Project Metadata
 
 __author__ = "Josh Tomlinson"
-__copyright__ = "Copyright 2014, Sean Wallitsch"
+__copyright__ = "Copyright 2015, Josh Tomlinson"
 __credits__ = [
     "Josh Tomlinson", "Frederick LeMaster", "Julius Yang", "Victor Vazquez",
     "Wil Ho", "Jeff Beeland", "Sanjit Patel", "Stephen Lu", "Sean Wallitsch",
