@@ -1,8 +1,6 @@
 """Classes for expanded numerical range processing."""
 
 # ----------------------------------------------------------------------------
-# imports:
-# ----------------------------------------------------------------------------
 
 from collections import MutableSequence
 from copy import deepcopy
@@ -11,15 +9,14 @@ from itertools import count, groupby
 from numbers import Number
 import re
 
+# ----------------------------------------------------------------------------
+
 __all__ = [
     'Range',
     'RangeList',
 ]
 
 # ----------------------------------------------------------------------------
-# globals:
-# ----------------------------------------------------------------------------
-
 
 # Optionally signed int or float
 NUM_SPEC = "([+-]?(\d+\.?|\d*\.\d+))"
@@ -28,24 +25,21 @@ NUM_SPEC = "([+-]?(\d+\.?|\d*\.\d+))"
 RANGE_SPEC_REGEX = re.compile(
     "^(({i})|({i}-{i})|({i}-{i}:{i}))$".format(i=NUM_SPEC)
 )
-#    Match positions for RANGE_SPEC_REGEX:
+# Match positions for RANGE_SPEC_REGEX:
 #
-#        0 = entire match
-#        1 = single frame match
-#        4 = start-stop (no step) match
-#        5 = start if 4
-#        7 = stop if 4
-#        9 = start-stop:step match
-#        10 = start if 9
-#        12 = stop if 9
-#        14 = step if 9
-#
+# 0 = entire match
+# 1 = single frame match
+# 4 = start-stop (no step) match
+# 5 = start if 4
+# 7 = stop if 4
+# 9 = start-stop:step match
+# 10 = start if 9
+# 12 = stop if 9
+# 14 = step if 9
 
 # A separator regex for parsing a list of range specifications
 SPEC_SEPARATOR_REGEX = re.compile("\s*,\s*")
 
-# ----------------------------------------------------------------------------
-# classes:
 # ----------------------------------------------------------------------------
 class Range(object):
     """Iterable, inclusive, numerical range.
@@ -84,19 +78,25 @@ class Range(object):
         return set(list(self)) == set(list(other))
 
     # ------------------------------------------------------------------------
-    def __init__(self, start, stop=None, step=None):
+    def __init__(self, start, stop=None, step=1):
         """Constructor.
 
-        raises ValueError if the step evaluates to False.
+        raises ValueError if any of start, stop, and step is non numeric
 
         """
 
-        self._start = start
-        self._stop = stop if stop is not None else start
-        self._step = step if step is not None else 1
+        if stop is None:
+            stop = start
 
-        if not self._step:
-            raise ValueError("Invalid step: " + str(self))
+        for name, num in [('start', start), ('stop', stop), ('step', step)]:
+            if not isinstance(num, Number):
+                raise ValueError(
+                    "Non-numeric type for '{name}' argument: {t}".format(
+                        name=name, t=type(num).__name__))
+
+        self._start = start
+        self._stop = stop
+        self._step = step
 
     # ------------------------------------------------------------------------
     def __iter__(self):
@@ -226,8 +226,6 @@ class RangeList(MutableSequence):
 
     separator = ','
 
-    # ------------------------------------------------------------------------
-    # special methods:
     # ------------------------------------------------------------------------
     def __add__(self, other):
         new_range_list = RangeList(list(self.ranges))
