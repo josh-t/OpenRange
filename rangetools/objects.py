@@ -2,7 +2,7 @@
 
 # ----------------------------------------------------------------------------
 
-from collections import MutableSequence
+from collections import Iterable, MutableSequence
 from copy import deepcopy
 from decimal import Decimal
 from itertools import count, groupby
@@ -41,7 +41,7 @@ RANGE_SPEC_REGEX = re.compile(
 SPEC_SEPARATOR_REGEX = re.compile("\s*,\s*")
 
 # ----------------------------------------------------------------------------
-class Range(object):
+class Range(Iterable):
     """Iterable, inclusive, numerical range.
 
     Like the built-in range() function, the Range object provides a way to
@@ -94,6 +94,9 @@ class Range(object):
                     "Non-numeric type for '{name}' argument: {t}".format(
                         name=name, t=type(num).__name__))
 
+        if step == 0:
+            raise ValueError("Range step cannot be 0.")
+
         self._start = start
         self._stop = stop
         self._step = step
@@ -135,6 +138,12 @@ class Range(object):
         )
 
     # ------------------------------------------------------------------------
+    def __reversed__(self):
+        new_range = Range(self._start, self._stop, self._step)
+        new_range.reverse()
+        return new_range
+
+    # ------------------------------------------------------------------------
     def __str__(self):
         """Returns a string representation of the range.
 
@@ -169,6 +178,11 @@ class Range(object):
                 spec += ":" + step
 
         return spec
+
+    # ------------------------------------------------------------------------
+    def reverse(self):
+        (self._start, self._stop) = (self._stop, self._start)
+        self._step *= -1
 
     # ------------------------------------------------------------------------
     @property
@@ -276,6 +290,12 @@ class RangeList(MutableSequence):
         return '{cls}("{spec}")'.format(
             cls=self.__class__.__name__, spec=str(self)
         )
+
+    # ------------------------------------------------------------------------
+    def __reversed__(self):
+        for _range in reversed(self._ranges):
+            for item in reversed(_range):
+                yield(item)
 
     # ------------------------------------------------------------------------
     def __setitem__(self, index, range_arg):
