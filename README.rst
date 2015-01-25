@@ -17,14 +17,15 @@ Usage
 Range
 *****
 
-The ``**Range**`` class provides a reusable, iterable interface to arithmetic
+The **Range** class provides a reusable, iterable interface to arithmetic
 progressions. 
 
-Like the built-in :py:func:`range` function, the ``**Range**`` object:
+Like the built-in `range <https://docs.python.org/2/library/functions.html#range>`_ function 
+(`xrange <https://docs.python.org/2/library/functions.html#xrange>`_ in python 2.x), the **Range** object:
 
 - accepts ``start``, ``stop``, and ``step`` values. 
 
-Unlike the built-in :py:func:`range` function, the ``**Range**`` object:
+Unlike the built-in range function, the **Range** object:
 
 - allows floating point values
 - is inclusive
