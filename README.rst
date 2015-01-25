@@ -1,6 +1,7 @@
 
+**********
 rangetools
-==========
+**********
 
 Tools for expanded numerical range processing.
 
@@ -8,27 +9,27 @@ Tools for expanded numerical range processing.
 README is a WIP...
 
 Description
-===========
+###########
 
 Usage
-=====
+*****
 
 Range
------
+*****
 
-The ``Range`` class provides a reusable, iterable interface to arithmetic
+The ``**Range**`` class provides a reusable, iterable interface to arithmetic
 progressions. 
 
-Like the built-in ``range`` function, the ``Range`` object:
+Like the built-in :py:func:`range` function, the ``**Range**`` object:
 
 - accepts ``start``, ``stop``, and ``step`` values. 
 
-Unlike the built-in ``range`` function, the ``Range`` object:
+Unlike the built-in :py:func:`range` function, the ``**Range**`` object:
 
 - allows floating point values
 - is inclusive
 
-```python
+.. code-block:: python
 
         >>> # object creation
         >>> from rangetools import Range
@@ -44,7 +45,6 @@ Unlike the built-in ``range`` function, the ``Range`` object:
         >>> for i in r:
         >>>    print str(i),
         1.0 1.1 1.2 1.3 1.4 1.5
-```
 
 # argument defaults...
 # string representations...
