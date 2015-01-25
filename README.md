@@ -28,7 +28,7 @@ Unlike the built-in ``range`` function, the ``Range`` object:
 - allows floating point values
 - is inclusive
 
-.. code-block:: python
+```python
 
         >>> # object creation
         >>> from rangetools import Range
@@ -44,6 +44,7 @@ Unlike the built-in ``range`` function, the ``Range`` object:
         >>> for i in r:
         >>>    print str(i),
         1.0 1.1 1.2 1.3 1.4 1.5
+```
 
 # argument defaults...
 # string representations...
