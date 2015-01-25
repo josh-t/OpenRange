@@ -114,12 +114,13 @@ class Range(object):
 
         # handle all math as decimal operations to avoid floating point
         # precision issues
-        (i, start, stop, step) = map(lambda s: Decimal(str(s)),
-            [self.start, self.start, self.stop, self.step])
+        (start, stop, step) = \
+            [Decimal(str(s)) for s in [self.start, self.stop, self.step]]
 
-        if i == stop:
-            yield _str_to_num(str(i))
+        if start == stop:
+            yield _str_to_num(str(start))
         else:
+            i = start
             num_steps = (stop - start) / step
             for i in range(0, num_steps + 1):
                 item = (i * step) + start
@@ -157,7 +158,8 @@ class Range(object):
 
         """
 
-        (start, stop, step) = map(str, [self.start, self.stop, self.step])
+        (start, stop, step) = \
+            [str(s) for s in [self.start, self.stop, self.step]]
 
         if start == stop:
             spec = start
@@ -414,7 +416,7 @@ def _arg_to_ranges(ranges_arg):
         ranges.append(deepcopy(ranges_arg))
 
     # string spec
-    elif isinstance(ranges_arg, basestring):
+    elif isinstance(ranges_arg, str):
         ranges.extend(_spec_to_ranges(ranges_arg))
 
     # number
@@ -562,7 +564,7 @@ def _parse_range_str(range_str):
             step = groups[14]
 
         # convert each to a number
-        (start, stop, step) = map(_str_to_num, [start, stop, step])
+        (start, stop, step) = [_str_to_num(s) for s in [start, stop, step]]
 
     else:
         raise SyntaxError(
