@@ -1,6 +1,6 @@
 """Functions for expanded numerical range processing."""
 
-from .objects import Range, RangeList
+from .base import Range, RangeList
 
 # ----------------------------------------------------------------------------
 

@@ -1,7 +1,9 @@
 
 from pkg_resources import get_distribution, DistributionNotFound
 
-from .objects import Range, RangeList
+from .base import Range, RangeList
+from .days import DaysRange, WeekdaysRange
+from .enum import EnumRange
 from .funcs import irange, range_str
 
 # ----------------------------------------------------------------------------

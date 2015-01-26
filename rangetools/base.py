@@ -21,6 +21,11 @@ __all__ = [
 # Optionally signed int or float
 NUM_SPEC = "([+-]?(\d+\.?|\d*\.\d+))"
 
+# XXX account for new repeat syntax... wip
+#RANGE_SPEC_REGEX = re.compile(
+#    "^(({i})(-({i})(:({i}))?)?(x({i}))?)".format(i=NUM_SPEC)
+#)
+
 # Range specification
 RANGE_SPEC_REGEX = re.compile(
     "^(({i})|({i}-{i})|({i}-{i}:{i}))$".format(i=NUM_SPEC)
@@ -75,10 +80,10 @@ class Range(Iterable):
     # ------------------------------------------------------------------------
     def __eq__(self, other):
         """Returns True if the set of items in each list are the same."""
-        return set(list(self)) == set(list(other))
+        return str(self) == str(other)
 
     # ------------------------------------------------------------------------
-    def __init__(self, start, stop=None, step=1):
+    def __init__(self, start, stop=None, step=1, repeat=1):
         """Constructor.
 
         raises ValueError if any of start, stop, and step is non numeric
@@ -97,9 +102,18 @@ class Range(Iterable):
         if step == 0:
             raise ValueError("Range step cannot be 0.")
 
+        try:
+            repeat = int(repeat)
+        except ValueError:
+            raise ValueError("Repeat argument must be an integer.")
+
+        if repeat < 1:
+            raise ValueError("Repeat argument must be positiveinteger.")
+
         self._start = start
         self._stop = stop
         self._step = step
+        self._repeat = repeat
 
     # ------------------------------------------------------------------------
     def __iter__(self):
@@ -120,16 +134,18 @@ class Range(Iterable):
         (start, stop, step) = \
             [Decimal(str(s)) for s in [self.start, self.stop, self.step]]
 
-        if start == stop:
-            yield _str_to_num(str(start))
-        else:
-            i = start
-            num_steps = (stop - start) / step
-            for i in range(0, num_steps + 1):
-                item = (i * step) + start
+        for i in range(0, self.repeat):
 
-                # convert back to float or int from decimal before yielding
-                yield _str_to_num(str(item))
+            if start == stop:
+                yield _str_to_num(str(start))
+            else:
+                i = start
+                num_steps = (stop - start) / step
+                for i in range(0, num_steps + 1):
+                    item = (i * step) + start
+
+                    # convert back to float or int from decimal before yielding
+                    yield _str_to_num(str(item))
 
     # ------------------------------------------------------------------------
     def __repr__(self):
@@ -139,7 +155,7 @@ class Range(Iterable):
 
     # ------------------------------------------------------------------------
     def __reversed__(self):
-        new_range = Range(self._start, self._stop, self._step)
+        new_range = Range(self.start, self.stop, self.step, self.repeat)
         new_range.reverse()
         return new_range
 
@@ -165,6 +181,11 @@ class Range(Iterable):
             >>> str(rng)
             "1-10:2"
 
+            >>> # repeat != 1
+            >>> rng = Range(1, 10, 2, 3)
+            >>> str(rng)
+            "1-10:2x3"
+
         """
 
         (start, stop, step) = \
@@ -177,12 +198,21 @@ class Range(Iterable):
             if self.step != 1:
                 spec += ":" + step
 
+        if self.repeat != 1:
+            spec += "x" + str(self.repeat)
+
         return spec
 
     # ------------------------------------------------------------------------
     def reverse(self):
         (self._start, self._stop) = (self._stop, self._start)
         self._step *= -1
+
+    # ------------------------------------------------------------------------
+    @property
+    def repeat(self):
+        """The number of repetitions while iterating over this range."""
+        return self._repeat
 
     # ------------------------------------------------------------------------
     @property
@@ -563,6 +593,8 @@ def _parse_range_str(range_str):
     See comments about match positions where RANGE_SPEC_REGEX is defined.
 
     """
+
+    # XXX parse the repeat value as well
     
     (start, stop, step) = (None, None, 1)
 
