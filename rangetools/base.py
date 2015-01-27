@@ -2,7 +2,7 @@
 
 # ----------------------------------------------------------------------------
 
-from collections import Iterable, MutableSequence
+from collections import Sequence, MutableSequence
 from copy import deepcopy
 from decimal import Decimal
 from itertools import count, groupby
@@ -46,7 +46,8 @@ RANGE_SPEC_REGEX = re.compile(
 SPEC_SEPARATOR_REGEX = re.compile("\s*,\s*")
 
 # ----------------------------------------------------------------------------
-class Range(Iterable):
+# XXX class Range(Sequence):
+class Range(object):
     """Iterable, inclusive, numerical range.
 
     Like the built-in range() function, the Range object provides a way to
@@ -78,12 +79,29 @@ class Range(Iterable):
     """
 
     # ------------------------------------------------------------------------
+    def __contains__(self, item):
+
+        (item, start, stop, step) = [
+            Decimal(str(i)) for i in [item, self.start, self.stop, self.step]]
+
+        if step > 0:
+            if item < start or item > stop:
+                return False
+        else:
+            if item > start or item < stop:
+                return False
+
+        return ((item - start) % step) == 0
+
+    # ------------------------------------------------------------------------
     def __eq__(self, other):
         """Returns True if the set of items in each list are the same."""
         return str(self) == str(other)
 
+    # XXX def __getitem__
+
     # ------------------------------------------------------------------------
-    def __init__(self, start, stop=None, step=1, repeat=1):
+    def __init__(self, start, stop=None, step=1, repeat=1, continuous=False):
         """Constructor.
 
         raises ValueError if any of start, stop, and step is non numeric
@@ -110,10 +128,11 @@ class Range(Iterable):
         if repeat < 1:
             raise ValueError("Repeat argument must be positiveinteger.")
 
+        self._continuous = continuous
+        self._repeat = repeat
         self._start = start
         self._stop = stop
         self._step = step
-        self._repeat = repeat
 
     # ------------------------------------------------------------------------
     def __iter__(self):
@@ -134,18 +153,25 @@ class Range(Iterable):
         (start, stop, step) = \
             [Decimal(str(s)) for s in [self.start, self.stop, self.step]]
 
-        for i in range(0, self.repeat):
+        diff = stop - start
+        num_steps = int((stop - start) / step)
+
+        for count in range(0, self.repeat):
 
             if start == stop:
                 yield _str_to_num(str(start))
             else:
-                i = start
-                num_steps = (stop - start) / step
                 for i in range(0, num_steps + 1):
                     item = (i * step) + start
 
                     # convert back to float or int from decimal before yielding
                     yield _str_to_num(str(item))
+
+            if self.continuous:
+                start = item + step
+                stop = start + diff
+
+    # XXX def __len__
 
     # ------------------------------------------------------------------------
     def __repr__(self):
@@ -203,10 +229,20 @@ class Range(Iterable):
 
         return spec
 
+    # XXX def index
+
+    # XXX def count
+
     # ------------------------------------------------------------------------
     def reverse(self):
         (self._start, self._stop) = (self._stop, self._start)
         self._step *= -1
+
+    # ------------------------------------------------------------------------
+    @property
+    def continuous(self):
+        """If a repeating range, don't restart the count when repeating."""
+        return self._continuous
 
     # ------------------------------------------------------------------------
     @property

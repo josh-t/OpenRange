@@ -4,21 +4,22 @@ from .base import Range
 # ----------------------------------------------------------------------------
 class EnumRange(Range):
 
-    def __init__(self, sequence, start=None, stop=None, step=1, repeat=1):
+    def __init__(self, sequence, start=None, stop=None, step=1, **kwargs):
 
         if isinstance(sequence, enumerate):
-            self._sequence = dict(sequence)
+            seq_list = list(sequence)
         else:
-            self._sequence = dict(enumerate(sequence))
-
+            seq_list = list(enumerate(sequence))
+            
+        self._sequence = dict(seq_list)
         lookup = {v: k for k, v in self._sequence.iteritems()}
 
         # start
         if start is None:
-            start = 0
+            start = seq_list[0][0]
         else:
             try:
-                start = _to_val(start, lookup)
+                start = _to_num(start, lookup)
             except ValueError:
                 raise ValueError(
                     "Invalid start value for enumerated range: {s}".\
@@ -26,10 +27,10 @@ class EnumRange(Range):
 
         # stop
         if stop is None:
-            stop = len(sequence) - 1
+            stop = len(seq_list) - 1 + seq_list[0][0]
         else:
             try:
-                stop = _to_val(stop, lookup)
+                stop = _to_num(stop, lookup)
             except ValueError:
                 raise ValueError(
                     "Invalid stop value for enumerated range: {s}".\
@@ -42,12 +43,12 @@ class EnumRange(Range):
             ValueError("Step must be 1 for enumerated type.")
 
         super(EnumRange, self).__init__(
-            start, stop=stop, step=step, repeat=repeat)
+            start, stop=stop, step=step, **kwargs)
 
     # ------------------------------------------------------------------------
     def __iter__(self):
-
         for i in super(EnumRange, self).__iter__():
+            i = i % len(self._sequence.keys())
             yield self._sequence[i]
 
     # ------------------------------------------------------------------------
@@ -68,6 +69,12 @@ class EnumRange(Range):
 
         return spec
 
+    # ------------------------------------------------------------------------
+    def enumerate(self):
+        for i in super(EnumRange, self).__iter__():
+            i = i % len(self._sequence.keys())
+            yield i, self._sequence[i]
+
 # ----------------------------------------------------------------------------
 def _to_num(val, lookup):
 
@@ -78,4 +85,6 @@ def _to_num(val, lookup):
             num = lookup[val]
         except KeyError:
             raise ValueError("Invalid value.")
+
+    return num
 
