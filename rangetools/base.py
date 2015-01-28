@@ -18,6 +18,13 @@ __all__ = [
 
 # ----------------------------------------------------------------------------
 
+# ----------------------------------------------------------------------------
+# Python 2/3 compatibility
+try:
+    xrange
+except NameError:
+    xrange = range
+
 # Optionally signed int or float
 NUM_SPEC = "([+-]?(\d+\.?|\d*\.\d+))"
 
@@ -160,12 +167,14 @@ class Range(object):
         diff = stop - start
         num_steps = int((stop - start) / step)
 
-        for count in range(0, self.repeat):
+        for i in xrange(0, self.repeat):
 
             if start == stop:
                 yield _str_to_num(str(start))
             else:
-                for i in range(0, num_steps + 1):
+                i = start
+                num_steps = int((stop - start) / step)
+                for i in xrange(0, num_steps + 1):
                     item = (i * step) + start
 
                     # convert back to float or int from decimal before yielding
@@ -236,6 +245,19 @@ class Range(object):
     # XXX def index
 
     # XXX def count
+
+    # ------------------------------------------------------------------------
+    def first_middle_last(self):
+        """Returns the first, middle, and last items of this range."""
+
+        # fast path for a simple range
+        if self._step == 1 and isinstance(self._start, int) and \
+           isinstance(self._stop, int):
+            middle = int((self._start + self._stop) / 2)
+            return (self._start, middle, self._stop)
+
+        # slow and sure method
+        return _first_middle_last(self)
 
     # ------------------------------------------------------------------------
     def reverse(self):
@@ -413,6 +435,13 @@ class RangeList(MutableSequence):
         self._ranges.extend(_arg_to_ranges(ranges_arg))
 
     # ------------------------------------------------------------------------
+    def first_middle_last(self):
+        """Returns the first, middle, and last items of the full sequence."""
+        if len(self._ranges) == 1:
+            return self._ranges[0].first_middle_last()
+        return _first_middle_last(self)
+
+    # ------------------------------------------------------------------------
     def insert(self, index, range_arg):
         """Insert into the list of contained Range Objects.
         
@@ -521,6 +550,33 @@ def _arg_to_ranges(ranges_arg):
     return ranges
 
 # ----------------------------------------------------------------------------
+def _first_middle_last(items):
+    """Given a list of items, return the first, middle, and last item"""
+
+    num_items = 0
+    for i in items:
+        if num_items == 0:
+            first = i
+        last = i
+        num_items += 1
+    
+    # calculate the index of the middle item
+    if num_items % 2 == 0:
+        middle_idx = int(num_items / 2) -1
+    else:
+        middle_idx = int(num_items / 2)
+
+    count = 0
+    for i in items:
+        middle = i
+        if count == middle_idx:
+            break
+        count += 1
+        
+    return (first, middle, last)
+        
+
+# ----------------------------------------------------------------------------
 def _items_to_ranges(items):
     """Given a list of items, return a full specification string.
 
@@ -576,7 +632,7 @@ def _items_to_ranges(items):
     items = sorted(list(set(items)))
 
     # calculate all possible steps between the items
-    steps = [items[i] - items[i-1] for i in range(1, len(items))]
+    steps = [items[i] - items[i-1] for i in xrange(1, len(items))]
 
     ranges = []
 
