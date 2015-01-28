@@ -204,6 +204,11 @@ class Range(Iterable):
         return spec
 
     # ------------------------------------------------------------------------
+    def first_middle_last(self):
+        """Returns the first, middle, and last items of this range."""
+        return _first_middle_last(list(self))
+
+    # ------------------------------------------------------------------------
     def reverse(self):
         (self._start, self._stop) = (self._stop, self._start)
         self._step *= -1
@@ -373,6 +378,11 @@ class RangeList(MutableSequence):
         self._ranges.extend(_arg_to_ranges(ranges_arg))
 
     # ------------------------------------------------------------------------
+    def first_middle_last(self):
+        """Returns the first, middle, and last items of the full sequence."""
+        return _first_middle_last(list(self))
+
+    # ------------------------------------------------------------------------
     def insert(self, index, range_arg):
         """Insert into the list of contained Range Objects.
         
@@ -479,6 +489,21 @@ def _arg_to_ranges(ranges_arg):
             ranges.extend(_arg_to_ranges(arg))
 
     return ranges
+
+# ----------------------------------------------------------------------------
+def _first_middle_last(items):
+    """Given a list of items, return the first, middle, and last item"""
+
+    num_items = len(items)
+    
+    # calculate the index of the middle item
+    if num_items % 2 == 0:
+        middle = int(num_items / 2) - 1
+    else:
+        middle = int(num_items / 2)
+        
+    return (items[0], items[middle], items[-1])
+        
 
 # ----------------------------------------------------------------------------
 def _items_to_ranges(items):
