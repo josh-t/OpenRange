@@ -2,7 +2,7 @@
 from pkg_resources import get_distribution, DistributionNotFound
 
 from .base import Range, RangeList
-from .days import DaysRange, WeekdaysRange
+from .date import DateRange
 from .enum import EnumRange
 from .funcs import irange, range_str
 

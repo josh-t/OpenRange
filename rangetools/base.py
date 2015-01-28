@@ -76,7 +76,9 @@ class Range(object):
         >>> str([i for i in rng)
         '[1.0, 0.8, 0.6, 0.4, 0.2, 0.0]'
 
+
     """
+    # XXX document all features
 
     # ------------------------------------------------------------------------
     def __contains__(self, item):
@@ -94,6 +96,7 @@ class Range(object):
         return ((item - start) % step) == 0
 
     # ------------------------------------------------------------------------
+    # XXX this the best way?
     def __eq__(self, other):
         """Returns True if the set of items in each list are the same."""
         return str(self) == str(other)
@@ -101,6 +104,7 @@ class Range(object):
     # XXX def __getitem__
 
     # ------------------------------------------------------------------------
+    # XXX inclusive/exclusive option?
     def __init__(self, start, stop=None, step=1, repeat=1, continuous=False):
         """Constructor.
 
