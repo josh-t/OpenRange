@@ -30,15 +30,18 @@ The **Range** class is very similar to Python 3's built-in `range <https://docs.
     >>>    print str(i),
     1.0 1.1 1.2 1.3 1.4 1.5
 
-See also rangetool's **irange** convenience function.
 
 # argument defaults...
 # string representations...
+# continuous
+# repeat
+
+See also rangetool's **irange** convenience function.
 
 RangeList
 ---------
 
-An iterable list of Range objects.
+TODO
 
 EnumRange
 ---------
@@ -75,8 +78,12 @@ Full signature: ``EnumRange(sequence, start=None, stop=None, step=1, repeat=None
 DateRange
 ---------
 
+TODO
+
 DatetimeRange
 -------------
+
+TODO
 
 Functions
 =========
@@ -128,10 +135,20 @@ Support
 **rangetools** has been tested with:
 
 * python 2.7
+* pythong 3.???    <<< not yet
 
 Installation
 ============
 
-License
-=======
+.. code-block:: bash
 
+    $ pip install rangetools    <<< not yet
+
+Contribute
+==========
+
+#. Check for open issues or open a fresh issue to start a discussion around a feature idea or a bug. 
+#. Fork the repo on GitHub to start making your changes. 
+#. Write a test which shows that the bug was fixed or that the feature works as expected.
+#. Send a pull request.
+#. Make sure to add yourself to **AUTHORS.rst** when your changes have been merged into **master**.
