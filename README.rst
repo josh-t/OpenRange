@@ -147,8 +147,10 @@ Installation
 Contribute
 ==========
 
+Thanks for checking out **rangetools**! Contribution is welcome from those who propose new features, have ideas for improvement, or submit a bug fixes. Here's a checklist for contributing to this project:
+
 #. Check for open issues or open a fresh issue to start a discussion around a feature idea or a bug. 
-#. Fork the repo on GitHub to start making your changes. 
-#. Write a test which shows that the bug was fixed or that the feature works as expected.
+#. Fork the repo on GitHub and start making your changes. 
+#. Write a test that shows the bug has been fixed or that the feature works as expected.
 #. Send a pull request.
-#. Make sure to add yourself to **AUTHORS.rst** when your changes have been merged into **master**.
+#. Make sure to add yourself to **AUTHORS.rst** once your changes have been merged into **master**.
