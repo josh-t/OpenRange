@@ -4,6 +4,8 @@ rangetools
 
 A collection of classes and functions providing features not found in python's built-in arithmetic progression interface.
 
+----
+
 For more information on python's built-in interfaces, see:
 
 * `range <https://docs.python.org/2/library/functions.html#range>`_, `xrange <https://docs.python.org/2/library/functions.html#xrange>`_ (Python 2)
