@@ -80,12 +80,33 @@ Full signature: ``EnumRange(sequence, start=None, stop=None, step=1, repeat=None
 DateRange
 ---------
 
-TODO
+A subclass of **Range**, the **DateRange** class provides an iterable range of python `date <https://docs.python.org/3/library/datetime.html?highlight=datetime#date-objects>`_ objects.
+
+.. code-block:: python
+
+    >>> from datetime import date
+    >>> from rangetools import DateRange
+    >>> d1 = date(2015, 1, 1)
+    >>> d2 = date(2016, 1, 1)
+    >>> for d in DateRange(d1, d2, step='10w'):
+    ...     print str(d),
+    ... 
+    2014-12-31 2015-03-11 2015-05-20 2015-07-29 2015-10-07 2015-12-16 <<< BUG BUG BUG!!!
+
+The ``step`` argument should be a string of the form ... XXX
+
+
+Full signature: ``DateRange(start, stop=None, step="1d", repeat=None, continuous=False)``
 
 DatetimeRange
 -------------
 
-TODO
+A subclass of **Range**, the **DatetimeRange** class provides an iterable range of python `datetime <https://docs.python.org/3/library/datetime.html?highlight=datetime#datetime-objects>`_ objects.
+
+.. code-block:: python
+
+
+Full signature: ``DatetimeRange(start, stop=None, step="1d", repeat=None, continuous=False)``
 
 Functions
 =========
