@@ -19,6 +19,8 @@ Range
 
 The **Range** class is very similar to Python 3's built-in `range <https://docs.python.org/3/library/stdtypes.html#range>`_ object. 
 
+The usage for **Range** objects should be familiar, but **Range** objects are *inclusive*. 
+
 .. code-block:: python
 
     >>> from rangetools import Range
@@ -26,24 +28,97 @@ The **Range** class is very similar to Python 3's built-in `range <https://docs.
     >>>    print str(i),
     0 2 4 6 8 10
 
+Another distinguishing characteristic of **Range** objects is that they support floating point values as well for any of the start, stop, and step values. 
+
 .. code-block:: python
 
     >>> for i in Range(1, 1.5, .1):
     >>>    print str(i),
     1.0 1.1 1.2 1.3 1.4 1.5
 
+* **Range** objects require at least a ``start`` value. The ``stop`` and ``step`` arguments are optional. 
 
-# argument defaults...
-# string representations...
-# continuous
-# repeat
+Stringified **Range** objects take the form ``<start>[-<stop>[:<step>]]``.
 
-See also rangetool's **irange** convenience function.
+.. code-block:: python
+
+    >>> r1 = Range(1)
+    >>> print r1
+    1
+    >>> r2 = Range(1, 10)
+    >>> print r2
+    1-10
+    >>> r3 = Range(1, 10, 2)
+    >>> print r3
+    1-10:2
+    >>> r4 = Range(.1)
+    >>> print r4
+    0.1
+    >>> r5 = Range(.1, 1.0)
+    >>> print r5
+    0.1-1.0
+    >>> r6 = Range(.1, 1.0, .2)
+    >>> print r6
+    0.1-1.0:0.2
+
+Two other optional arguments are also available, ``repeat`` and ``continuous``. The ``repeat`` option specifies how many times to iterate over the range. 
+
+.. code-block:: python
+
+    >>> for i in Range(0, 10, 2, repeat=2):
+    ...     print(i),
+    ... 
+    0 2 4 6 8 10 0 2 4 6 8 10
+
+The ``continuous`` option is only valid with the ``repeat`` option and is a boolean value that indicates whether subsequent iterations should begin from the ``start`` value. When set to ``True``, subsequent iterations use the last iterated item plus ``step`` to indicate the new start value. From there, the ``step`` continues as usual for the number of items in the range. This is best illustrated by example.
+
+.. code-block:: python
+
+    >>> for i in Range(0, 10, 2, repeat=2, continuous=True):
+    ...     print(i),
+    ... 
+    0 2 4 6 8 10 12 14 16 18 20 22
+
+* See the **EnumRange** examples below for a better use case for the ``continuous`` option.
+
+**Range** objects also support negative step values and can be used with all of the options shown above.
+
+.. code-block:: python
+
+    >>> for i in Range(10, 0, -2, repeat=2, continuous=True):
+    ...     print(i),
+    ... 
+    10 8 6 4 2 0 -2 -4 -6 -8 -10 -12
+
+* See the **irange** convenience function below for a simplified wrapper around **Range** that behaves similarly to the built-in interface.
+
+Full signature: ``Range(start, stop=None, step=1, repeat=1, continuous=False)``
 
 RangeList
 ---------
 
-TODO
+The **RangeList** object is a `mutable sequence <https://docs.python.org/3/library/stdtypes.html#mutable-sequence-types>`_ of **Range** objects. The constructor takes a single required ``ranges_arg`` that can be any of the following types:
+
+* **int** - single integer value
+* **float** - single floating point value
+* **string** - any valid string represenation of a **Range**, f.e. "1-10:2"
+* **Range** - a single **Range** object
+* **RangeList** - another **RangeList** object
+* **list** - of any combination of the above types
+
+These types are converted internally to a list of **Range** objects (hence the name). Once constructed, iterating over a **RangeList** object will yield each item in each contained **Range** in the order provided to the constructor. 
+
+.. code-block:: python
+
+It is also possible to iterate over the **Range** objects themselves using the **ranges** property on the object.
+
+
+.. code-block:: python
+
+
+# TODO: compact, fml, continuous
+
+Full signature: ``RangeList(ranges_arg, separator=",")``
 
 EnumRange
 ---------
@@ -63,8 +138,8 @@ The **EnumRange** class is a subclass of **Range** and provides iterable enumera
     ... 
     (0, 'Mon') (2, 'Wed') (4, 'Fri') (6, 'Sun')
     >>> e = EnumRange(day_abbr, start="Mon", stop="Sun", step=2)
-    >>> str(e)
-    'Mon-Sun:2'
+    >>> print(e)
+    Mon-Sun:2
     
 The optional ``repeat`` and ``continuous`` arguments available on **Range** can be used as well:
 
@@ -73,7 +148,7 @@ The optional ``repeat`` and ``continuous`` arguments available on **Range** can 
     >>> for d in EnumRange(day_abbr, start="Mon", stop="Sun", step=2, repeat=2, continuous=True):
     ...     print d,
     ... 
-    Mon Wed Fri Sun Tue Thu Sat Mon <<< result is a bug!!! 
+    Mon Wed Fri Sun Tue Thu Sat Mon 
     
 Full signature: ``EnumRange(sequence, start=None, stop=None, step=1, repeat=None, continuous=False)``
 
