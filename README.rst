@@ -92,7 +92,7 @@ The ``continuous`` option is only valid with the ``repeat`` option and is a bool
 
 * See the **irange** convenience function below for a simplified wrapper around **Range** that behaves similarly to the built-in interface.
 
-Full signature: ``Range(start, stop=None, step=1, repeat=1, continuous=False)``
+Signature: ``Range(start, stop=None, step=1, repeat=1, continuous=False)``
 
 RangeList
 ---------
@@ -118,7 +118,7 @@ It is also possible to iterate over the **Range** objects themselves using the *
 
 # TODO: compact, fml, continuous
 
-Full signature: ``RangeList(ranges_arg, separator=",")``
+Signature: ``RangeList(ranges_arg, separator=",")``
 
 EnumRange
 ---------
@@ -156,7 +156,7 @@ The optional ``repeat`` and ``continuous`` arguments available on **Range** can 
     ... 
     Mon Wed Fri Sun Tue Thu Sat Mon 
     
-Full signature: ``EnumRange(sequence, start=None, stop=None, step=1, repeat=None, continuous=False)``
+Signature: ``EnumRange(sequence, start=None, stop=None, step=1, repeat=None, continuous=False)``
 
 DateRange
 ---------
@@ -177,7 +177,7 @@ A subclass of **Range**, the **DateRange** class provides an iterable range of p
 The ``step`` argument should be a string of the form ... XXX
 
 
-Full signature: ``DateRange(start, stop=None, step="1d", repeat=None, continuous=False)``
+Signature: ``DateRange(start, stop=None, step="1d", repeat=None, continuous=False)``
 
 DatetimeRange
 -------------
@@ -188,7 +188,7 @@ A subclass of **Range**, the **DatetimeRange** class provides an iterable range 
 
 # TODO: example
 
-Full signature: ``DatetimeRange(start, stop=None, step="1d", repeat=None, continuous=False)``
+Signature: ``DatetimeRange(start, stop=None, step="1d", repeat=None, continuous=False)``
 
 Functions
 =========
@@ -209,7 +209,7 @@ Short for 'inclusive range', **irange** is a convenience function that returns a
     >>>     print str(i),
     0.1, 0.3, 0.5, 0.7, 0.9
 
-Full signature: ``irange(start, stop=None, step=None)``
+Signature: ``irange(start, stop=None, step=None)``
 
 range_str
 ---------
@@ -232,7 +232,7 @@ An optional ``separator`` argument is provided to override the default ``,`` sep
 
 It should be noted that this function removes duplicate items from the supplied range arguments and sorts them in order to determine the compacted string representation.
 
-Full signature: ``range_str(ranges_arg, separator=None)``
+Signature: ``range_str(ranges_arg, separator=None)``
 
 Support
 =======
