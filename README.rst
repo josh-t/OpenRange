@@ -2,7 +2,7 @@
 rangetools
 ==========
 
-A collection of classes and functions providing features not found in python's built-in arithmetic progression interface.
+A collection of classes and functions providing some additional features not found in python's built-in arithmetic progression interface.
 
 ----
 
