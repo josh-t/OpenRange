@@ -17,9 +17,7 @@ Classes
 Range
 -----
 
-The **Range** class is very similar to Python 3's built-in `range <https://docs.python.org/3/library/stdtypes.html#range>`_ object. 
-
-The usage for **Range** objects should be familiar, but **Range** objects are *inclusive*. 
+The **Range** class is quite similar to Python 3's built-in `range <https://docs.python.org/3/library/stdtypes.html#range>`_ object, so its usage should be familiar.
 
 .. code-block:: python
 
@@ -28,7 +26,9 @@ The usage for **Range** objects should be familiar, but **Range** objects are *i
     >>>    print str(i),
     0 2 4 6 8 10
 
-Another distinguishing characteristic of **Range** objects is that they support floating point values as well for any of the start, stop, and step values. 
+* Notice that **Range** objects are inclusive.
+
+A major distinguishing characteristic of **Range** objects is that they support floating point values for any of the start, stop, and step values. 
 
 .. code-block:: python
 
