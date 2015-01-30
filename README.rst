@@ -180,6 +180,7 @@ A subclass of **Range**, the **DatetimeRange** class provides an iterable range 
 
 .. code-block:: python
 
+# TODO: example
 
 Full signature: ``DatetimeRange(start, stop=None, step="1d", repeat=None, continuous=False)``
 
