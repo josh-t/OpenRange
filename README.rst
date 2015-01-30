@@ -17,7 +17,7 @@ Classes
 Range
 -----
 
-The **Range** class is quite similar to Python 3's built-in `range <https://docs.python.org/3/library/stdtypes.html#range>`_ object, so its usage should be familiar.
+The **Range** class is quite similar in usage to Python 2's `range <https://docs.python.org/2/library/functions.html#range>`_ function and Python 3's built-in `range <https://docs.python.org/3/library/stdtypes.html#range>`_ object. The first difference you'll notice is that **Range** objects are inclusive of the ``stop`` value.
 
 .. code-block:: python
 
@@ -26,9 +26,7 @@ The **Range** class is quite similar to Python 3's built-in `range <https://docs
     >>>    print str(i),
     0 2 4 6 8 10
 
-* Notice that **Range** objects are inclusive.
-
-A major distinguishing characteristic of **Range** objects is that they support floating point values for any of the start, stop, and step values. 
+Another distinguishing characteristic of **Range** objects is that they support floating point values for any of the start, stop, and step values. 
 
 .. code-block:: python
 
@@ -70,6 +68,7 @@ Two other optional arguments are also available, ``repeat`` and ``continuous``. 
     ... 
     0 2 4 6 8 10 0 2 4 6 8 10
 
+# TODO: rewrite, describe modulus
 The ``continuous`` option is only valid with the ``repeat`` option and is a boolean value that indicates whether subsequent iterations should begin from the ``start`` value. When set to ``True``, subsequent iterations use the last iterated item plus ``step`` to indicate the new start value. From there, the ``step`` continues as usual for the number of items in the range. This is best illustrated by example.
 
 .. code-block:: python
