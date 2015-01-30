@@ -257,5 +257,5 @@ Thanks for checking out **rangetools**! Contribution is welcome from those who p
 #. Check for open issues or open a fresh issue to start a discussion around a feature idea or a bug. 
 #. Fork the repo on GitHub and start making your changes. 
 #. Write a test that shows the bug has been fixed or that the feature works as expected.
-#. Make sure to add yourself to **AUTHORS.rst**.
+#. Make sure to add yourself to **CONTRIBUTORS.rst**.
 #. Send a pull request.
