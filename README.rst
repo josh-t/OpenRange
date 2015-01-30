@@ -133,6 +133,12 @@ The **EnumRange** class is a subclass of **Range** and provides iterable enumera
     ...     print d,
     ... 
     Mon Wed Fri Sun
+
+# TODO: also accepts enumerate object argument to allow non-0 start
+# TODO: enumate() method
+
+.. code-block:: python
+
     >>> for d in EnumRange(day_abbr, start="Mon", stop="Sun", step=2).enumerate():
     ...     print d,
     ... 
