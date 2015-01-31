@@ -184,10 +184,9 @@ class Range(object):
                 repeats_counter += 1
                 if self.continuous:
                     if step > 0:
-                        item = item % (stop - start + 1) + start
+                        item = item - (stop - start + 1)
                     else:
-                        # XXX
-                        pass
+                        item = item + (start - stop + 1) 
                 else:
                     item = start
 

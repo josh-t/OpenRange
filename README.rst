@@ -68,15 +68,14 @@ Two other optional arguments are also available, ``repeat`` and ``continuous``. 
     ... 
     0 2 4 6 8 10 0 2 4 6 8 10
 
-# TODO: rewrite, describe modulus
-The ``continuous`` option is only valid with the ``repeat`` option and is a boolean value that indicates whether subsequent iterations should begin from the ``start`` value. When set to ``True``, subsequent iterations use the last iterated item plus ``step`` to indicate the new start value. From there, the ``step`` continues as usual for the number of items in the range. This is best illustrated by example.
+The ``continuous`` option is only valid with the ``repeat`` option and is a boolean value that indicates whether subsequent iterations should begin from the ``start`` value. When set to ``True``, the iteration will wrap around the end of the list back to the beginning by ``step`` elements. This is best illustrated by example.
 
 .. code-block:: python
 
     >>> for i in Range(0, 10, 2, repeat=2, continuous=True):
     ...     print(i),
     ... 
-    0 2 4 6 8 10 12 14 16 18 20 22
+    0 2 4 6 8 10 1 3 5 7 9
 
 * See the **EnumRange** examples below for a better use case for the ``continuous`` option.
 
@@ -87,7 +86,7 @@ The ``continuous`` option is only valid with the ``repeat`` option and is a bool
     >>> for i in Range(10, 0, -2, repeat=2, continuous=True):
     ...     print(i),
     ... 
-    10 8 6 4 2 0 -2 -4 -6 -8 -10 -12
+    10 8 6 4 2 0 9 7 5 3 1
 
 * See the **irange** convenience function below for a simplified wrapper around **Range** that behaves similarly to the built-in interface.
 
