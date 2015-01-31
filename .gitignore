@@ -7,7 +7,7 @@
 [._]s[a-w][a-z]
 
 # Documentation build
-docs/build
+docs/_build
 
 # Setuptools artifacts
 *.egg
