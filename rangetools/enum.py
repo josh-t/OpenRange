@@ -48,7 +48,6 @@ class EnumRange(Range):
     # ------------------------------------------------------------------------
     def __iter__(self):
         for i in super(EnumRange, self).__iter__():
-            i = i % len(self._sequence.keys())
             yield self._sequence[i]
 
     # ------------------------------------------------------------------------
@@ -72,7 +71,6 @@ class EnumRange(Range):
     # ------------------------------------------------------------------------
     def enumerate(self):
         for i in super(EnumRange, self).__iter__():
-            i = i % len(self._sequence.keys())
             yield i, self._sequence[i]
 
 # ----------------------------------------------------------------------------
