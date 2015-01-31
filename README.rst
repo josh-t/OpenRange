@@ -59,7 +59,7 @@ Stringified **Range** objects take the form ``<start>[-<stop>[:<step>]]``.
     >>> print r6
     0.1-1.0:0.2
 
-Two other optional arguments are also available, ``repeat`` and ``continuous``. The ``repeat`` option specifies how many times to iterate over the range. 
+Two other optional arguments are also available, ``repeat`` and ``wrap``. The ``repeat`` option specifies how many times to iterate over the range. 
 
 .. code-block:: python
 
@@ -68,29 +68,29 @@ Two other optional arguments are also available, ``repeat`` and ``continuous``. 
     ... 
     0 2 4 6 8 10 0 2 4 6 8 10
 
-The ``continuous`` option is only valid with the ``repeat`` option and is a boolean value that indicates whether subsequent iterations should begin from the ``start`` value. When set to ``True``, the iteration will wrap around the end of the list back to the beginning by ``step`` elements. This is best illustrated by example.
+The ``wrap`` option is useful with a ``repeat`` value > 1. ``wrap`` is a boolean value that indicates where subsequent iterations should begin. The default is ``False``, meaning each iteration through the range will begin at the ``start`` value. When set to ``True``, the iteration will wrap around the end of the range back to the beginning by ``step`` elements. This is best illustrated by example.
 
 .. code-block:: python
 
-    >>> for i in Range(0, 10, 2, repeat=2, continuous=True):
+    >>> for i in Range(0, 10, 2, repeat=2, wrap=True):
     ...     print(i),
     ... 
     0 2 4 6 8 10 1 3 5 7 9
 
-* See the **EnumRange** examples below for a better use case for the ``continuous`` option.
+* See the **EnumRange** examples below for a better use case for the ``wrap`` option.
 
 **Range** objects also support negative step values and can be used with all of the options shown above.
 
 .. code-block:: python
 
-    >>> for i in Range(10, 0, -2, repeat=2, continuous=True):
+    >>> for i in Range(10, 0, -2, repeat=2, wrap=True):
     ...     print(i),
     ... 
     10 8 6 4 2 0 9 7 5 3 1
 
 * See the **irange** convenience function below for a simplified wrapper around **Range** that behaves similarly to the built-in interface.
 
-Signature: ``Range(start, stop=None, step=1, repeat=1, continuous=False)``
+Signature: ``Range(start, stop=None, step=1, repeat=1, wrap=False)``
 
 RangeList
 ---------
@@ -145,16 +145,16 @@ The **EnumRange** class is a subclass of **Range** and provides iterable enumera
     >>> print(e)
     Mon-Sun:2
     
-The optional ``repeat`` and ``continuous`` arguments available on **Range** can be used as well:
+The optional ``repeat`` and ``wrap`` arguments available on **Range** can be used as well:
 
 .. code-block:: python
 
-    >>> for d in EnumRange(day_abbr, start="Mon", stop="Sun", step=2, repeat=2, continuous=True):
+    >>> for d in EnumRange(day_abbr, start="Mon", stop="Sun", step=2, repeat=2, wrap=True):
     ...     print d,
     ... 
     Mon Wed Fri Sun Tue Thu Sat Mon 
     
-Signature: ``EnumRange(sequence, start=None, stop=None, step=1, repeat=None, continuous=False)``
+Signature: ``EnumRange(sequence, start=None, stop=None, step=1, repeat=None, wrap=False)``
 
 DateRange
 ---------
@@ -175,7 +175,7 @@ A subclass of **Range**, the **DateRange** class provides an iterable range of p
 The ``step`` argument should be a string of the form ... XXX
 
 
-Signature: ``DateRange(start, stop=None, step="1d", repeat=None, continuous=False)``
+Signature: ``DateRange(start, stop=None, step="1d", repeat=None, wrap=False)``
 
 DatetimeRange
 -------------
@@ -186,7 +186,7 @@ A subclass of **Range**, the **DatetimeRange** class provides an iterable range 
 
 # TODO: example
 
-Signature: ``DatetimeRange(start, stop=None, step="1d", repeat=None, continuous=False)``
+Signature: ``DatetimeRange(start, stop=None, step="1d", repeat=None, wrap=False)``
 
 Functions
 =========

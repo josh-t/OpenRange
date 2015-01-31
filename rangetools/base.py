@@ -113,8 +113,7 @@ class Range(object):
     # XXX def __getitem__
 
     # ------------------------------------------------------------------------
-    # XXX inclusive/exclusive option?
-    def __init__(self, start, stop=None, step=1, repeat=1, continuous=False):
+    def __init__(self, start, stop=None, step=1, repeat=1, wrap=False):
         """Initializes a new Range object.
 
         Args:
@@ -122,6 +121,7 @@ class Range(object):
             stop(numbers.Number): The end number of the range.  Default is None.
             step(numbers.Number): The step length to use.  Default is 1.
             repeat(int): The number of times to repeat the range.
+            wrap(bool): XXX need good explanation
 
         Raises:
             ValueError: Start, top, or step values are non numeric, or if
@@ -147,11 +147,11 @@ class Range(object):
         if repeat < 1:
             raise ValueError("Repeat argument must be positiveinteger.")
 
-        self._continuous = continuous
         self._repeat = repeat
         self._start = start
         self._stop = stop
         self._step = step
+        self._wrap = wrap
 
     # ------------------------------------------------------------------------
     def __iter__(self):
@@ -182,7 +182,7 @@ class Range(object):
             if ((step > 0 and item > stop) or
                 (step < 0 and item < stop)):
                 repeats_counter += 1
-                if self.continuous:
+                if self.wrap:
                     if step > 0:
                         item = item - (stop - start + 1)
                     else:
@@ -277,9 +277,9 @@ class Range(object):
 
     # ------------------------------------------------------------------------
     @property
-    def continuous(self):
+    def wrap(self):
         """If a repeating range, don't restart the count when repeating."""
-        return self._continuous
+        return self._wrap
 
     # ------------------------------------------------------------------------
     @property
