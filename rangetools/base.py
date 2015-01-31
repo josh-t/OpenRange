@@ -173,25 +173,24 @@ class Range(object):
             ]
         ]
 
-        diff = stop - start
-        num_steps = int((stop - start) / step)
+        item = start
+        repeats_counter = 1
+        while repeats_counter <= self.repeat:
+            yield _str_to_num(str(item))
+            item += step
 
-        for i in xrange(0, self.repeat):
-            if start == stop:
-                yield _str_to_num(str(start))
-            else:
-                i = start
-                num_steps = int((stop - start) / step)
-                for i in xrange(0, num_steps + 1):
-                    item = (i * step) + start
+            if ((step > 0 and item > stop) or
+                (step < 0 and item < stop)):
+                repeats_counter += 1
+                if self.continuous:
+                    if step > 0:
+                        item = item % (stop - start + 1) + start
+                    else:
+                        # XXX
+                        pass
+                else:
+                    item = start
 
-                    # Convert back to float or int from decimal before
-                    # yielding.
-                    yield _str_to_num(str(item))
-
-            if self.continuous:
-                start = item + step
-                stop = start + diff
 
     # XXX def __len__
 
