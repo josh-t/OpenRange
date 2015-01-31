@@ -2,9 +2,18 @@
 rangetools
 ==========
 
-A collection of classes and functions providing some additional features for arithmetic progressions. 
+A collection of classes and functions providing some additional tools for arithmetic progressions. 
 
-* For more information on python's built-in interfaces, see Python 2's `range <https://docs.python.org/2/library/functions.html#range>`_ and `xrange <https://docs.python.org/2/library/functions.html#xrange>`_ functions or Python 3's `range <https://docs.python.org/3/library/stdtypes.html#range>`_ object.
+* Classes:
+    * `Range`_
+    * `EnumRange`_
+    * `DateRange`_
+    * `DatetimeRange`_
+* Functions:
+    * `irange`_
+    * `range_str`_
+
+For more information on python's built-in interfaces, see Python 2's `range <https://docs.python.org/2/library/functions.html#range>`_ and `xrange <https://docs.python.org/2/library/functions.html#xrange>`_ functions or Python 3's `range <https://docs.python.org/3/library/stdtypes.html#range>`_ object.
 
 Classes
 =======
@@ -12,7 +21,7 @@ Classes
 Range
 -----
 
-The **Range** class is quite similar in usage to python's built-in interface. The first difference you'll notice is that **Range** objects are inclusive of the ``stop`` value.
+The **Range** class is quite similar in usage to python's built-in ``range`` interface. The first difference you'll notice is that **Range** objects are inclusive of the ``stop`` value.
 
 .. code-block:: python
 
