@@ -77,7 +77,11 @@ The ``wrap`` option is useful with a ``repeat`` value ``> 1``. ``wrap`` is a boo
     ... 
     0 2 4 6 8 10 1 3 5 7 9
 
-* See the `EnumRange <#enumrange>`_ examples below for a better use case for the ``wrap`` option.
+If the result in the example above seems incorrect, this may help:
+
+    ``0`` - 1 - ``2`` - 3 - ``4`` -  5 - ``6`` - 7 - ``8`` - 9 - ``10`` - 0 - ``1`` - 2 - ``3`` - 4 - ``5`` - 6 - ``7`` - 8 - ``9``
+
+See the `EnumRange <#enumrange>`_ examples below for a better use case for the ``wrap`` option.
 
 **Range** objects also support negative step values and can be used with all of the options shown above.
 
