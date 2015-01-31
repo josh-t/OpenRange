@@ -4,16 +4,11 @@ rangetools
 
 A collection of classes and functions providing some additional tools for arithmetic progressions. 
 
-* Classes:
-    * `Range`_
-    * `EnumRange`_
-    * `DateRange`_
-    * `DatetimeRange`_
-* Functions:
-    * `irange`_
-    * `range_str`_
+**Classes**: `Range`_, `RangeList`_, `EnumRange`_, `DateRange`_, `DatetimeRange`_
 
-For more information on python's built-in interfaces, see Python 2's `range <https://docs.python.org/2/library/functions.html#range>`_ and `xrange <https://docs.python.org/2/library/functions.html#xrange>`_ functions or Python 3's `range <https://docs.python.org/3/library/stdtypes.html#range>`_ object.
+**Functions**: `irange`_, `range_str`_
+
+For more information on the built-in interfaces, see Python 2's `range <https://docs.python.org/2/library/functions.html#range>`_ and `xrange <https://docs.python.org/2/library/functions.html#xrange>`_ functions or Python 3's `range <https://docs.python.org/3/library/stdtypes.html#range>`_ object.
 
 Classes
 =======
