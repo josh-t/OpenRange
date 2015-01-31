@@ -2,14 +2,9 @@
 rangetools
 ==========
 
-A collection of classes and functions providing some additional features not found in python's built-in arithmetic progression interface.
+A collection of classes and functions providing some additional features for arithmetic progressions. 
 
-----
-
-For more information on python's built-in interfaces, see:
-
-* `range <https://docs.python.org/2/library/functions.html#range>`_, `xrange <https://docs.python.org/2/library/functions.html#xrange>`_ (Python 2)
-* `range <https://docs.python.org/3/library/stdtypes.html#range>`_ (Python 3)
+* For more information on python's built-in interfaces, see Python 2's `range <https://docs.python.org/2/library/functions.html#range>`_ and `xrange <https://docs.python.org/2/library/functions.html#xrange>`_ functions or Python 3's `range <https://docs.python.org/3/library/stdtypes.html#range>`_ object.
 
 Classes
 =======
@@ -17,7 +12,7 @@ Classes
 Range
 -----
 
-The **Range** class is quite similar in usage to Python 2's `range <https://docs.python.org/2/library/functions.html#range>`_ function and Python 3's built-in `range <https://docs.python.org/3/library/stdtypes.html#range>`_ object. The first difference you'll notice is that **Range** objects are inclusive of the ``stop`` value.
+The **Range** class is quite similar in usage to python's built-in interface. The first difference you'll notice is that **Range** objects are inclusive of the ``stop`` value.
 
 .. code-block:: python
 
@@ -36,6 +31,7 @@ Another distinguishing characteristic of **Range** objects is that they support 
 
 * **Range** objects require at least a ``start`` value. The ``stop`` and ``step`` arguments are optional. 
 
+# TODO: repeat & wrap in str?
 Stringified **Range** objects take the form ``<start>[-<stop>[:<step>]]``.
 
 .. code-block:: python
@@ -43,20 +39,14 @@ Stringified **Range** objects take the form ``<start>[-<stop>[:<step>]]``.
     >>> r1 = Range(1)
     >>> print r1
     1
-    >>> r2 = Range(1, 10)
+    >>> r2 = Range(.1, 1.0)
     >>> print r2
-    1-10
+    0.1-1.0
     >>> r3 = Range(1, 10, 2)
     >>> print r3
     1-10:2
-    >>> r4 = Range(.1)
+    >>> r4 = Range(.1, 1.0, .2)
     >>> print r4
-    0.1
-    >>> r5 = Range(.1, 1.0)
-    >>> print r5
-    0.1-1.0
-    >>> r6 = Range(.1, 1.0, .2)
-    >>> print r6
     0.1-1.0:0.2
 
 Two other optional arguments are also available, ``repeat`` and ``wrap``. The ``repeat`` option specifies how many times to iterate over the range. 
@@ -68,7 +58,7 @@ Two other optional arguments are also available, ``repeat`` and ``wrap``. The ``
     ... 
     0 2 4 6 8 10 0 2 4 6 8 10
 
-The ``wrap`` option is useful with a ``repeat`` value > 1. ``wrap`` is a boolean value that indicates where subsequent iterations should begin. The default is ``False``, meaning each iteration through the range will begin at the ``start`` value. When set to ``True``, the iteration will wrap around the end of the range back to the beginning by ``step`` elements. This is best illustrated by example.
+The ``wrap`` option is useful with a ``repeat`` value ``> 1``. ``wrap`` is a boolean value that indicates where subsequent iterations should begin. The default is ``False``, meaning each iteration through the range will begin at the ``start`` value. When set to ``True``, the iteration will wrap around the end of the range back to the beginning by ``step`` elements. This is best illustrated by example.
 
 .. code-block:: python
 
@@ -99,7 +89,7 @@ The **RangeList** object is a `mutable sequence <https://docs.python.org/3/libra
 
 * **int** - single integer value
 * **float** - single floating point value
-* **string** - any valid string represenation of a **Range**, f.e. "1-10:2"
+* **string** - any valid string represenation of a **Range** or **RangeList**
 * **Range** - a single **Range** object
 * **RangeList** - another **RangeList** object
 * **list** - of any combination of the above types
@@ -108,14 +98,57 @@ These types are converted internally to a list of **Range** objects (hence the n
 
 .. code-block:: python
 
-It is also possible to iterate over the **Range** objects themselves using the **ranges** property on the object.
-
+    >>> from rangetools import RangeList
+    >>> for i in  RangeList(["1-10:2", "20-30:5", "25-36:4"]):
+    ...     print str(i),
+    ... 
+    1 3 5 7 9 20 25 30 25 29 33
 
 .. code-block:: python
 
+It is also possible to iterate over the **Range** objects themselves using the **ranges** property on the object.
 
-# TODO: compact, fml, continuous
+.. code-block:: python
 
+    >>> for r in  RangeList(["1-10:2", "20-30:5", "25-36:4"]).ranges:
+    ...     for i in r:
+    ...         print(str(i)),
+    ... 
+    1 3 5 7 9 20 25 30 25 29 33
+
+The ``compact`` method compacts all contained ranges into the most concise set of ranges possible.
+
+.. code-block:: python
+
+    >>> r = RangeList("1-50:2,25-75:2")
+    >>> print r
+    1-50:2,25-75:2
+    >>> r.compact()
+    >>> print r
+    1-75:2
+
+The ``first_middle_last`` method returns a tuple of 3 items of the form ``(first, middle, last)`` representing the, you guessed it, first, middle, and last items for all items in the **RangeList**.
+
+.. code-block:: python
+
+    >>> r = RangeList("10-0:-2, 9-10:.1, 1-4:.5")
+    >>> r.first_middle_last()
+    (10, 9.5, 4.0)
+
+The ``continuous`` method returns True if the **RangeList** has a single contained **Range** and its step is 1.
+
+.. code-block:: python
+
+    >>> r = RangeList("1-10")
+    >>> r.continuous
+    True
+    >>> r = RangeList("1-10, 17-23")
+    >>> r.continuous
+    False
+
+* An optional ``separator`` can be supplied to the constructor to alter the string representation of the **RangeList** object. 
+
+# TODO: if another separator is supplied to constructor, use that when parsing the ranges_arg.
 Signature: ``RangeList(ranges_arg, separator=",")``
 
 EnumRange
@@ -132,8 +165,7 @@ The **EnumRange** class is a subclass of **Range** and provides iterable enumera
     ... 
     Mon Wed Fri Sun
 
-# TODO: also accepts enumerate object argument to allow non-0 start
-# TODO: enumate() method
+The ``enumerate`` method yields tuples like python's built-in `enumerate <https://docs.python.org/3/library/functions.html#enumerate>`_ interface.
 
 .. code-block:: python
 
@@ -141,6 +173,21 @@ The **EnumRange** class is a subclass of **Range** and provides iterable enumera
     ...     print d,
     ... 
     (0, 'Mon') (2, 'Wed') (4, 'Fri') (6, 'Sun')
+    
+An ``enumerate`` object can also be supplied to the constructor which allows the user to control the start value of the underlying count.
+
+.. code-block:: python
+
+    >>> e = enumerate(["cat", "dog", "horse", "chicken", "pig", "cow"], start=7)
+    >>> for i in EnumRange(e, start="dog", step=2).enumerate():
+    ...     print i,
+    ... 
+    (8, 'dog') (10, 'chicken') (12, 'cow')
+    
+The string representation of **EnumRange** objects uses the enumerated values rather than the underlying count.    
+    
+.. code-block:: python
+    
     >>> e = EnumRange(day_abbr, start="Mon", stop="Sun", step=2)
     >>> print(e)
     Mon-Sun:2
