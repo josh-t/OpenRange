@@ -237,9 +237,15 @@ A subclass of **Range**, the **DateRange** class provides an iterable range of p
     >>> d1 = date(2015, 1, 1)
     >>> d2 = date(2016, 1, 1)
     >>> for d in DateRange(d1, d2, step='10w'):
-    ...     print str(d),
+    ...     print str(d)
     ... 
-    2014-12-31 2015-03-11 2015-05-20 2015-07-29 2015-10-07 2015-12-16 <<< BUG BUG BUG!!!
+    datetime.date(2015, 1, 1)
+    datetime.date(2015, 3, 12)
+    datetime.date(2015, 5, 21)
+    datetime.date(2015, 7, 30)
+    datetime.date(2015, 10, 8)
+    datetime.date(2015, 12, 17)
+    
 
 The ``step`` argument should be a string of the form ... XXX
 
