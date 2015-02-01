@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # rangetools documentation build configuration file, created by
-# sphinx-quickstart on Thu Jan 29 23:08:09 2015.
+# sphinx-quickstart on Sat Jan 31 10:59:16 2015.
 #
 # This file is execfile()d with the current directory set to its
 # containing dir.
@@ -30,9 +30,12 @@ import os
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
+    'sphinx.ext.mathjax',
+    'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
 ]
 
