@@ -5,6 +5,25 @@ class TestRange(unittest.TestCase):
     def setUp(self):
         pass
 
+    def test_range_args(self):
+        # non numeric argument
+        args = [None]
+        self.assertRaises(ValueError, Range, *args)
+
+        # step cannot be 0
+        args = [1,1,0]
+        self.assertRaises(ValueError, Range, *args)
+
+        # repeat must be integer
+        args = [1,2,1]
+        kwargs = {'repeat': 1.5}
+        self.assertRaises(ValueError, Range, *args, **kwargs)
+
+        # repeat must be greater than or equal to 1
+        args = [1,2,1]
+        kwargs = {'repeat': -0.5}
+        self.assertRaises(ValueError, Range, *args, **kwargs)
+
     def test_basic_range(self):
         # Only start argument
         rng = Range(2.3)
@@ -67,4 +86,8 @@ class TestRange(unittest.TestCase):
         items = [x for x in rng]
         self.assertEquals(items, [10.1, 9.8, 9.5, 10.0, 9.7, 9.4])
 
-       
+    def test_ridiculous(self):
+        # ridiculous arguments ... need to determine what should happen here
+        rng = Range(0,0.1,1000, repeat=2, wrap=True)
+        items = [x for x in rng]
+        self.assertEquals(True, False)
