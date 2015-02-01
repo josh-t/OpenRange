@@ -121,7 +121,8 @@ class Range(object):
             stop(numbers.Number): The end number of the range.  Default is None.
             step(numbers.Number): The step length to use.  Default is 1.
             repeat(int): The number of times to repeat the range.
-            wrap(bool): XXX need good explanation
+            wrap(bool): A step treats stop as a modulus (see
+                modular arithmetic), e.g. 10(pm) plus a step of 4 hours is 2(am).
 
         Raises:
             ValueError: Start, stop, or step values are non numeric, or if
