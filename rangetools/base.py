@@ -141,12 +141,13 @@ class Range(object):
             raise ValueError("Range step cannot be 0.")
 
         try:
-            repeat = int(repeat)
+            if repeat != int(repeat):
+                raise ValueError("Repeat argument must be an integer.")
         except ValueError:
             raise ValueError("Repeat argument must be an integer.")
 
         if repeat < 1:
-            raise ValueError("Repeat argument must be positiveinteger.")
+            raise ValueError("Repeat argument must be positive integer.")
 
         self._repeat = repeat
         self._start = start
