@@ -1,6 +1,7 @@
 
 from datetime import date, datetime
 import re
+from time import localtime, mktime
 
 from .base import Range, NUM_SPEC
 
@@ -31,7 +32,7 @@ DELTA_MULTS = {
     'y': 60 * 60 * 24 * 7 * 52,
 }
 
-EPOCH = datetime(1970,1,1)
+EPOCH = datetime.fromtimestamp(mktime(localtime(0)))
 
 # ----------------------------------------------------------------------------
 class _DateTypeRange(Range):
