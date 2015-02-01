@@ -1,5 +1,5 @@
 .. rangetools documentation master file, created by
-   sphinx-quickstart on Thu Jan 29 23:08:09 2015.
+   sphinx-quickstart on Sat Jan 31 10:59:16 2015.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
