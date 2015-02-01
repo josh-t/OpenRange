@@ -1,36 +1,70 @@
 import unittest
-import rangetools
+from rangetools import Range
 
 class TestRange(unittest.TestCase):
     def setUp(self):
         pass
 
     def test_basic_range(self):
+        # Only start argument
+        rng = Range(2.3)
+        items = [x for x in rng]
+        self.assertEquals(items, [2.3])
+
+        # start equals stop
+        rng = Range(-1.3, -1.3)
+        items = [x for x in rng]
+        self.assertEquals(items, [-1.3])
+
         # integer start integer stop, ascending step by one
-        rng = rangetools.Range(0,2,1)
+        rng = Range(0,2,1)
         items = [x for x in rng]
         self.assertEquals(items, [0, 1, 2])
 
         # integer start float stop, ascending step by one
-        rng = rangetools.Range(-1, .5, 1)
+        rng = Range(-1, .5, 1)
         items = [x for x in rng]
         self.assertEquals(items, [-1, 0])
 
         # float start float stop, ascending step by one
-        rng = rangetools.Range(.5, 2.5, 1)
+        rng = Range(.5, 2.5, 1)
         items = [x for x in rng]
         self.assertEquals(items, [0.5, 1.5, 2.5])
 
+        # float step
+        rng = Range(1, 2, .3)
+        items = [x for x in rng]
+        self.assertEquals(items, [1, 1.3, 1.6, 1.9])
+
+        # negative float step
+        rng = Range(10, 8.5, -0.5)
+        items = [x for x in rng]
+        self.assertEquals(items, [10, 9.5, 9.0, 8.5])
+
         # First step is outside bounds.
-        rng = rangetools.Range(0, 1, -1)
+        rng = Range(0, 1, -1)
         items = [x for x in rng]
         self.assertEquals(items, [0])
 
     def test_range_wrap(self):
-        rng = rangetools.Range(0, 2, 1, repeat=2, wrap=True)
+        # Integer step wrap
+        rng = Range(0, 2, 1, repeat=2, wrap=True)
         items = [x for x in rng]
         self.assertEquals(items, [0, 1, 2, 0, 1, 2])
 
-        rng = rangetools.Range(0, 1, .4, repeat=2, wrap=True)
+        # Float step wrap
+        rng = Range(0, 1, .4, repeat=2, wrap=True)
         items = [x for x in rng]
         self.assertEquals(items, [0, 0.4, 0.8, 0.2, 0.6, 1.0])
+
+        # all float wrap, descending step hits start
+        rng = Range(10.1, 9.3, -.2, repeat=2, wrap=True)
+        items = [x for x in rng]
+        self.assertEquals(items, [10.1, 9.9, 9.7, 9.5, 9.3, 9.9, 9.7, 9.5, 9.3])
+
+        # all float wrap, descending step does not hit start
+        rng = Range(10.1, 9.3, -.3, repeat=2, wrap=True)
+        items = [x for x in rng]
+        self.assertEquals(items, [10.1, 9.8, 9.5, 10.0, 9.7, 9.4])
+
+       
