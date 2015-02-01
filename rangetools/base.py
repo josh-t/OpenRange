@@ -124,7 +124,7 @@ class Range(object):
             wrap(bool): XXX need good explanation
 
         Raises:
-            ValueError: Start, top, or step values are non numeric, or if
+            ValueError: Start, stop, or step values are non numeric, or if
                 the given repeat value is non-integer or less than 1.
         """
         if stop is None:
