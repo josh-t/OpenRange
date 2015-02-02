@@ -28,7 +28,8 @@ The **Range** class is quite similar in usage to python's built-in ``range`` int
 
     >>> from rangetools import Range
     >>> for i in Range(0, 10, 2):
-    >>>    print str(i),
+    >>>    print i,
+    ...
     0 2 4 6 8 10
 
 Another distinguishing characteristic of **Range** objects is that they support floating point values for any of the start, stop, and step values. 
@@ -36,12 +37,14 @@ Another distinguishing characteristic of **Range** objects is that they support 
 .. code-block:: python
 
     >>> for i in Range(1, 1.5, .1):
-    >>>    print str(i),
+    >>>    print i,
+    ...
     1.0 1.1 1.2 1.3 1.4 1.5
 
 * **Range** objects require at least a ``start`` value. The ``stop`` and ``step`` arguments are optional. 
 
-# TODO: repeat & wrap in str?
+# TODO: repeat in str
+
 Stringified **Range** objects take the form ``<start>[-<stop>[:<step>]]``.
 
 .. code-block:: python
@@ -59,50 +62,27 @@ Stringified **Range** objects take the form ``<start>[-<stop>[:<step>]]``.
     >>> print r4
     0.1-1.0:0.2
 
-Two other optional arguments are also available, ``repeat`` and ``wrap``. The ``repeat`` option specifies how many times to iterate over the range. 
+The ``repeat`` option specifies how many times to iterate over the range. 
 
 .. code-block:: python
 
     >>> for i in Range(0, 10, 2, repeat=2):
-    ...     print(i),
+    ...     print i,
     ... 
     0 2 4 6 8 10 0 2 4 6 8 10
 
-The ``wrap`` option is useful with a ``repeat`` value ``> 1``. ``wrap`` is a boolean value that indicates where subsequent iterations should begin. The default is ``False``, meaning each iteration through the range will begin at the ``start`` value. When set to ``True``, the iteration will wrap around the end of the range back to the beginning by ``step`` elements. This is best illustrated by example.
+**Range** objects also support negative step values.
 
 .. code-block:: python
 
-    >>> for i in Range(0, 10, 2, repeat=2, wrap=True):
-    ...     print(i),
+    >>> for i in Range(10, 0, -2):
+    ...     print i ,
     ... 
-    0 2 4 6 8 10 1 3 5 7 9
-
-The table below shows how the iteration differs between ``wrap=False`` and ``wrap=True``:
-
-+----------------+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+------+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+------+
-| ``repeat=2``   |                          1st iteration                           |                          2nd iteration                           |     
-+----------------+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+------+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+------+
-|   ``0-10``     |  0  |  1  |  2  |  3  |  4  |  5  |  6  |  7  |  8  |  9  |  10  |  0  |  1  |  2  |  3  |  4  |  5  |  6  |  7  |  8  |  9  |  10  |
-+----------------+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+------+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+------+
-| ``wrap=False`` |  ^  |     |  ^  |     |  ^  |     |  ^  |     |  ^  |     |   ^  |  ^  |     |  ^  |     |  ^  |     |  ^  |     |  ^  |     |   ^  |
-+----------------+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+------+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+------+
-| ``wrap=True``  |  ^  |     |  ^  |     |  ^  |     |  ^  |     |  ^  |     |   ^  |     |  ^  |     |  ^  |     |  ^  |     |  ^  |     |  ^  |      |
-+----------------+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+------+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+------+
-
-See the `EnumRange <#enumrange>`_ examples below for a better use case for the ``wrap`` option.
-
-**Range** objects also support negative step values and can be used with all of the options shown above.
-
-.. code-block:: python
-
-    >>> for i in Range(10, 0, -2, repeat=2, wrap=True):
-    ...     print(i),
-    ... 
-    10 8 6 4 2 0 9 7 5 3 1
+    10 8 6 4 2 0
 
 * See the **irange** convenience function below for a simplified wrapper around **Range** that behaves similarly to the built-in interface.
 
-Signature: ``Range(start, stop=None, step=1, repeat=1, wrap=False)``
+Signature: ``Range(start, stop=None, step=1, repeat=1)``
 
 RangeList
 ---------
@@ -122,7 +102,7 @@ These types are converted internally to a list of **Range** objects (hence the n
 
     >>> from rangetools import RangeList
     >>> for i in  RangeList(["1-10:2", "20-30:5", "25-36:4"]):
-    ...     print str(i),
+    ...     print i,
     ... 
     1 3 5 7 9 20 25 30 25 29 33
 
@@ -134,7 +114,7 @@ It is also possible to iterate over the **Range** objects themselves using the *
 
     >>> for r in  RangeList(["1-10:2", "20-30:5", "25-36:4"]).ranges:
     ...     for i in r:
-    ...         print(str(i)),
+    ...         print i,
     ... 
     1 3 5 7 9 20 25 30 25 29 33
 
@@ -211,19 +191,19 @@ The string representation of **EnumRange** objects uses the enumerated values ra
 .. code-block:: python
     
     >>> e = EnumRange(day_abbr, start="Mon", stop="Sun", step=2)
-    >>> print(e)
+    >>> print e
     Mon-Sun:2
     
-The optional ``repeat`` and ``wrap`` arguments available on **Range** can be used as well:
+The optional ``repeat`` argument available on **Range** can be used as well:
 
 .. code-block:: python
 
-    >>> for d in EnumRange(day_abbr, start="Mon", stop="Sun", step=2, repeat=2, wrap=True):
+    >>> for d in EnumRange(day_abbr, start="Mon", stop="Sun", step=2, repeat=2):
     ...     print d,
     ... 
-    Mon Wed Fri Sun Tue Thu Sat Mon 
+    Mon Wed Fri Sun Mon Wed Fri Sun 
     
-Signature: ``EnumRange(sequence, start=None, stop=None, step=1, repeat=None, wrap=False)``
+Signature: ``EnumRange(sequence, start=None, stop=None, step=1, repeat=None)``
 
 DateRange
 ---------
@@ -237,7 +217,7 @@ A subclass of **Range**, the **DateRange** class provides an iterable range of p
     >>> d1 = date(2015, 1, 1)
     >>> d2 = date(2016, 1, 1)
     >>> for d in DateRange(d1, d2, step='10w'):
-    ...     print str(d)
+    ...     print d
     ... 
     datetime.date(2015, 1, 1)
     datetime.date(2015, 3, 12)
@@ -250,7 +230,7 @@ A subclass of **Range**, the **DateRange** class provides an iterable range of p
 The ``step`` argument should be a string of the form ... XXX
 
 
-Signature: ``DateRange(start, stop=None, step="1d", repeat=None, wrap=False)``
+Signature: ``DateRange(start, stop=None, step="1d", repeat=None)``
 
 DatetimeRange
 -------------
@@ -261,7 +241,7 @@ A subclass of **Range**, the **DatetimeRange** class provides an iterable range 
 
 # TODO: example
 
-Signature: ``DatetimeRange(start, stop=None, step="1d", repeat=None, wrap=False)``
+Signature: ``DatetimeRange(start, stop=None, step="1d", repeat=None)``
 
 Functions
 =========
@@ -275,11 +255,13 @@ Short for 'inclusive range', **irange** is a convenience function that returns a
 
     >>> from rangetools import irange
     >>> for i in irange(0, 10):
-    >>>     print str(i),
+    >>>     print i,
+    ...
     0 1 2 3 4 5 6 7 8 9 10
     
     >>> for i in irange(.1, 1, .2):
-    >>>     print str(i),
+    >>>     print i,
+    ...
     0.1, 0.3, 0.5, 0.7, 0.9
 
 Signature: ``irange(start, stop=None, step=None)``

@@ -113,7 +113,7 @@ class Range(object):
     # XXX def __getitem__
 
     # ------------------------------------------------------------------------
-    def __init__(self, start, stop=None, step=1, repeat=1, wrap=False):
+    def __init__(self, start, stop=None, step=1, repeat=1):
         """Initializes a new Range object.
 
         Args:
@@ -121,8 +121,6 @@ class Range(object):
             stop(numbers.Number): The end number of the range.  Default is None.
             step(numbers.Number): The step length to use.  Default is 1.
             repeat(int): The number of times to repeat the range.
-            wrap(bool): A step treats stop as a modulus (see
-                modular arithmetic), e.g. 10(pm) plus a step of 4 hours is 2(am).
 
         Raises:
             ValueError: Start, stop, or step values are non numeric, or if
@@ -153,7 +151,6 @@ class Range(object):
         self._start = start
         self._stop = stop
         self._step = step
-        self._wrap = wrap
 
     # ------------------------------------------------------------------------
     def __iter__(self):
@@ -184,13 +181,7 @@ class Range(object):
             if ((step > 0 and item > stop) or
                 (step < 0 and item < stop)):
                 repeats_counter += 1
-                if self.wrap:
-                    if step > 0:
-                        item = item - (stop - start + 1)
-                    else:
-                        item = item + (start - stop + 1) 
-                else:
-                    item = start
+                item = start
 
 
     # XXX def __len__
@@ -276,12 +267,6 @@ class Range(object):
         """Reverses the range in place."""
         (self._start, self._stop) = (self._stop, self._start)
         self._step *= -1
-
-    # ------------------------------------------------------------------------
-    @property
-    def wrap(self):
-        """If a repeating range, don't restart the count when repeating."""
-        return self._wrap
 
     # ------------------------------------------------------------------------
     @property
