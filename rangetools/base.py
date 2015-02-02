@@ -2,7 +2,7 @@
 
 # ----------------------------------------------------------------------------
 
-from collections import Sequence, MutableSequence
+from collections import Sequence, MutableMapping, MutableSequence
 from copy import deepcopy
 from decimal import Decimal
 from itertools import count, groupby
@@ -13,6 +13,7 @@ import re
 
 __all__ = [
     'Range',
+    'RangeDict',
     'RangeList',
 ]
 
@@ -317,6 +318,66 @@ class Range(object):
         if not isinstance(stop, Number):
             raise ValueError('The given stop value must be a number.')
         self._stop = stop
+
+# ----------------------------------------------------------------------------
+class RangeDict(MutableMapping):
+
+    # ------------------------------------------------------------------------
+    def __delitem__(self, key):
+        del self._ranges[key]
+
+    # ------------------------------------------------------------------------
+    def __getattr__(self, attr):
+        if attr in self._ranges.keys():
+            return self._ranges[attr]
+        else:
+            super(RangeDict, self).__getattr__(attr)
+
+    # ------------------------------------------------------------------------
+    def __getitem__(self, key):
+        return self._ranges[key]
+
+    # ------------------------------------------------------------------------
+    def __init__(self, ranges_dict):
+
+        self._ranges = {}
+        
+        for (key, range_arg) in ranges_dict.items():
+            self._ranges[key] = _arg_to_range(range_arg)
+
+    # ------------------------------------------------------------------------
+    def __iter__(self):
+
+        for name in self._ranges.keys():
+            for i in self._ranges[name]:
+                yield i
+            
+    # ------------------------------------------------------------------------
+    def __len__(self):
+        return len(self._ranges.keys())
+
+    # ------------------------------------------------------------------------
+    def __setitem__(self, key, value):
+        self._ranges[key] = value
+
+    # XXX 
+    # pop
+    # popitem
+    # clear
+    # update
+    # setdefault
+
+    # ------------------------------------------------------------------------
+    @property
+    def ranges(self):
+        for (name, _range) in self._ranges.items():
+            yield (name, _range)
+
+    # ------------------------------------------------------------------------
+    @property
+    def range_names(self):
+        for name in self._ranges.keys():
+            yield name
 
 # ----------------------------------------------------------------------------
 class RangeList(MutableSequence):

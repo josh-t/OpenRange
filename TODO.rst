@@ -1,5 +1,6 @@
 base
 ----
+* add union/intersection method for Range
 * make abc for all Range objects
   ** only really have to implement conversion methods 
   ** that's all current subclasses do anyway
@@ -16,6 +17,7 @@ date/time
   ** Limit TimeRange start/stop 0-23:59:59 (in seconds)
   ** Default step is 1h
   ** Make date/time base class more generic?
+* figure out date/time range strings
 
 funcs
 -----
@@ -24,10 +26,7 @@ funcs
 
 new
 ---
-* an object that identified a range, but you could define named subranges. so 
-  you could iterate over the whole thing like a regular Range object, but it 
-  would expose the named subranges via properties that were also iterable. if 
-  you add/remove a named subrange it may expand overall range of the object. 
+  * make a RangeDict object
 
 other
 -----
