@@ -352,13 +352,6 @@ class RangeDict(MutableMapping):
         del self._ranges[key]
 
     # ------------------------------------------------------------------------
-    def __getattr__(self, attr):
-        if attr in self._ranges.keys():
-            return self._ranges[attr]
-        else:
-            super(RangeDict, self).__getattr__(attr)
-
-    # ------------------------------------------------------------------------
     def __getitem__(self, key):
         return self._ranges[key]
 
