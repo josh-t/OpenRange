@@ -65,29 +65,3 @@ class TestRange(unittest.TestCase):
         items = [x for x in rng]
         self.assertEquals(items, [0])
 
-    def test_range_wrap(self):
-        # Integer step wrap
-        rng = Range(0, 2, 1, repeat=2, wrap=True)
-        items = [x for x in rng]
-        self.assertEquals(items, [0, 1, 2, 0, 1, 2])
-
-        # Float step wrap
-        rng = Range(0, 1, .4, repeat=2, wrap=True)
-        items = [x for x in rng]
-        self.assertEquals(items, [0, 0.4, 0.8, 0.2, 0.6, 1.0])
-
-        # all float wrap, descending step hits start
-        rng = Range(10.1, 9.3, -.2, repeat=2, wrap=True)
-        items = [x for x in rng]
-        self.assertEquals(items, [10.1, 9.9, 9.7, 9.5, 9.3, 9.9, 9.7, 9.5, 9.3])
-
-        # all float wrap, descending step does not hit start
-        rng = Range(10.1, 9.3, -.3, repeat=2, wrap=True)
-        items = [x for x in rng]
-        self.assertEquals(items, [10.1, 9.8, 9.5, 10.0, 9.7, 9.4])
-
-    def test_ridiculous(self):
-        # ridiculous arguments ... need to determine what should happen here
-        rng = Range(0,0.1,1000, repeat=2, wrap=True)
-        items = [x for x in rng]
-        self.assertEquals(True, False)
