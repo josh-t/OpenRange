@@ -2,6 +2,7 @@
 
 # ----------------------------------------------------------------------------
 
+from abc import ABCMeta, abstractmethod
 from collections import Sequence, MutableMapping, MutableSequence
 from copy import deepcopy
 from decimal import Decimal
@@ -12,12 +13,11 @@ import re
 # ----------------------------------------------------------------------------
 
 __all__ = [
+    'BaseRange',
     'Range',
     'RangeDict',
     'RangeList',
 ]
-
-# ----------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------
 # Python 2/3 compatibility
@@ -25,6 +25,8 @@ try:
     xrange
 except NameError:
     xrange = range
+
+# ----------------------------------------------------------------------------
 
 # Optionally signed int or float
 NUM_SPEC = "([+-]?(\d+\.?|\d*\.\d+))"
@@ -54,52 +56,24 @@ RANGE_SPEC_REGEX = re.compile(
 SPEC_SEPARATOR_REGEX = re.compile("\s*,\s*")
 
 # ----------------------------------------------------------------------------
-# XXX class Range(Sequence):
-class Range(object):
-    """Iterable, inclusive, numerical range.
-
-    Like the built-in range() function, the Range object provides a way to
-    iterate over a list of numbers. Unlike the built-in range() function, the
-    Range object supports both integer and float values interchangably.
-
-    Range objects are also inclusive, unlike range().
-
-    Examples:
-
-        >>> rng = Range(0, 10, 2)
-        >>> str([i for i in rng])
-        '[0, 2, 4, 6, 8, 10]'
-
-        >>> rng = Range(0, 1, .2)
-        >>> str([i for i in rng])
-        '[0.0, 0.2, 0.4, 0.6, 0.8, 1.0]'
-
-    Negative steps are also supported:
-
-        >>> rng = Range(10, 0, -2)
-        >>> str([i for i in rng)
-        '[10, 8, 6, 4, 2, 0]'
-
-        >>> rng = Range(1, 0, -.2)
-        >>> str([i for i in rng)
-        '[1.0, 0.8, 0.6, 0.4, 0.2, 0.0]'
-    """
-    # XXX document all features
+# XXX class BaseRange(Sequence):
+class BaseRange(object):
+    
+    __metaclass__ = ABCMeta
 
     # ------------------------------------------------------------------------
     def __contains__(self, item):
 
-        (item, start, stop, step) = [
-            Decimal(str(i)) for i in [item, self.start, self.stop, self.step]]
+        item = self.to_num(i)
 
-        if step > 0:
-            if item < start or item > stop:
+        if self.step > 0:
+            if item < self.start or item > self.stop:
                 return False
         else:
-            if item > start or item < stop:
+            if item > self.start or item < self.stop:
                 return False
 
-        return ((item - start) % step) == 0
+        return ((item - self.start) % self.step) == 0
 
     # ------------------------------------------------------------------------
     # XXX this the best way?
@@ -111,6 +85,7 @@ class Range(object):
         """
         return str(self) == str(other)
 
+    # ------------------------------------------------------------------------
     # XXX def __getitem__
 
     # ------------------------------------------------------------------------
@@ -130,13 +105,7 @@ class Range(object):
         if stop is None:
             stop = start
 
-        for name, num in [('start', start), ('stop', stop), ('step', step)]:
-            if not isinstance(num, Number):
-                raise ValueError(
-                    "Non-numeric type for '{name}' argument: {t}".format(
-                        name=name, t=type(num).__name__))
-
-        if step == 0:
+        if 0 == self.to_num(step):
             raise ValueError("Range step cannot be 0.")
 
         try:
@@ -148,10 +117,10 @@ class Range(object):
         if repeat < 1:
             raise ValueError("Repeat argument must be positive integer.")
 
-        self._repeat = repeat
-        self._start = start
-        self._stop = stop
-        self._step = step
+        self.repeat = repeat
+        self.start = start
+        self.stop = stop
+        self.step = step
 
     # ------------------------------------------------------------------------
     def __iter__(self):
@@ -163,28 +132,19 @@ class Range(object):
             >>>    print str(i),
             1 3 5 7 9
         """
-        # Handle all math as decimal operations to avoid floating point
-        # precision issues.
-        (start, stop, step) = [
-            Decimal(str(s)) for s in [
-                self.start,
-                self.stop,
-                self.step,
-            ]
-        ]
 
-        item = start
+        item = self.start
         repeats_counter = 1
         while repeats_counter <= self.repeat:
-            yield _str_to_num(str(item))
-            item += step
+            yield self.to_value(item)
+            item += self.step
 
-            if ((step > 0 and item > stop) or
-                (step < 0 and item < stop)):
+            if ((self.step > 0 and item > self.stop) or
+                (self.step < 0 and item < self.stop)):
                 repeats_counter += 1
-                item = start
+                item = self.start
 
-
+    # ------------------------------------------------------------------------
     # XXX def __len__
 
     # ------------------------------------------------------------------------
@@ -195,7 +155,8 @@ class Range(object):
 
     # ------------------------------------------------------------------------
     def __reversed__(self):
-        new_range = Range(self.start, self.stop, self.step, self.repeat)
+        cls = self.__class__
+        new_range = cls(self.start, self.stop, self.step, self.repeat)
         new_range.reverse()
         return new_range
 
@@ -226,48 +187,62 @@ class Range(object):
             >>> str(rng)
             "1-10:2x3"
         """
-        (start, stop, step) = [
-            str(s) for s in [
-                self.start,
-                self.stop,
-                self.step,
-            ]
-        ]
 
-        if start == stop:
-            spec = start
+        if self.start == self.stop:
+            spec = str(self.to_value(self.start))
         else:
-            spec = "{start}-{stop}".format(start=start, stop=stop)
+            spec = "{start}-{stop}".format(
+                start=self.to_value(self.start), 
+                stop=self.to_value(self.stop),
+            )
             if self.step != 1:
-                spec += ":" + step
+                spec += ":" + str(self.step)
 
         if self.repeat != 1:
             spec += "x" + str(self.repeat)
 
         return spec
 
+    # ------------------------------------------------------------------------
     # XXX def index
 
+    # ------------------------------------------------------------------------
     # XXX def count
+
+    # ------------------------------------------------------------------------
+    def enumerate(self, start=0):
+        c = count()
+        for i in self:
+            yield (next(c), i)
 
     # ------------------------------------------------------------------------
     def first_middle_last(self):
         """Returns the first, middle, and last items of this range."""
 
         # fast path for a simple range
-        if self._step == 1 and isinstance(self._start, int) and \
-           isinstance(self._stop, int):
-            middle = int((self._start + self._stop) / 2)
-            return (self._start, middle, self._stop)
+        if self.step == 1 and isinstance(self.start, int) and \
+           isinstance(self.stop, int):
+            middle = int((self.start + self.stop) / 2)
+            return (self.start, middle, self.stop)
 
         # slow and sure method
         return _first_middle_last(self)
 
     # ------------------------------------------------------------------------
+    @abstractmethod
+    def to_num(self, value):
+        pass
+       
+    # ------------------------------------------------------------------------
+    @abstractmethod
+    def to_value(self, num):
+        pass
+
+    # ------------------------------------------------------------------------
     def reverse(self):
         """Reverses the range in place."""
-        (self._start, self._stop) = (self._stop, self._start)
-        self._step *= -1
+        (self.start, self.stop) = (self.stop, self.start)
+        self.step *= -1
 
     # ------------------------------------------------------------------------
     @property
@@ -275,6 +250,7 @@ class Range(object):
         """The number of repetitions while iterating over this range."""
         return self._repeat
 
+    # ------------------------------------------------------------------------
     @repeat.setter
     def repeat(self, repeat):
         if not isinstance(repeat, int):
@@ -289,11 +265,10 @@ class Range(object):
         """The start value for this range."""
         return self._start
 
+    # ------------------------------------------------------------------------
     @start.setter
     def start(self, start):
-        if not isinstance(start, Number):
-            raise ValueError('The given start value must be a number.')
-        self._start = start
+        self._start = self.to_num(start)
 
     # ------------------------------------------------------------------------
     @property
@@ -301,11 +276,10 @@ class Range(object):
         """The step value for this range."""
         return self._step
 
+    # ------------------------------------------------------------------------
     @step.setter
     def step(self, step):
-        if not isinstance(step, Number):
-            raise ValueError('The given step value must be a number.')
-        self._step = step
+        self._step = self.to_num(step)
 
     # ------------------------------------------------------------------------
     @property
@@ -313,11 +287,62 @@ class Range(object):
         """The stop value for this range."""
         return self._stop
 
+    # ------------------------------------------------------------------------
     @stop.setter
     def stop(self, stop):
-        if not isinstance(stop, Number):
-            raise ValueError('The given stop value must be a number.')
-        self._stop = stop
+        self._stop = self.to_num(stop)
+
+# ------------------------------------------------------------------------
+class Range(BaseRange):
+    """Iterable, inclusive, numerical range.
+
+    Like the built-in range() function, the Range object provides a way to
+    iterate over a list of numbers. Unlike the built-in range() function, the
+    Range object supports both integer and float values interchangably.
+
+    Range objects are also inclusive, unlike range().
+
+    Examples:
+
+        >>> rng = Range(0, 10, 2)
+        >>> str([i for i in rng])
+        '[0, 2, 4, 6, 8, 10]'
+
+        >>> rng = Range(0, 1, .2)
+        >>> str([i for i in rng])
+        '[0.0, 0.2, 0.4, 0.6, 0.8, 1.0]'
+
+    Negative steps are also supported:
+
+        >>> rng = Range(10, 0, -2)
+        >>> str([i for i in rng)
+        '[10, 8, 6, 4, 2, 0]'
+
+        >>> rng = Range(1, 0, -.2)
+        >>> str([i for i in rng)
+        '[1.0, 0.8, 0.6, 0.4, 0.2, 0.0]'
+    """
+
+    # ------------------------------------------------------------------------
+    def to_num(self, value):
+
+        # Handle all math as decimal operations to avoid floating point
+        # precision issues.
+        return Decimal(str(value))
+       
+    # ------------------------------------------------------------------------
+    def to_value(self, num):
+
+        num_str = str(num)
+
+        # Rely on the fact that attempting to convert a string that represents
+        # a float to an int will raise ValueError
+        try:
+            value = int(num_str)
+        except ValueError:
+            value = float(num_str)
+    
+        return value
 
 # ----------------------------------------------------------------------------
 class RangeDict(MutableMapping):
@@ -567,17 +592,6 @@ class RangeList(MutableSequence):
             yield _range
 
 # ----------------------------------------------------------------------------
-def _str_to_num(item_str):
-    """Converts a given item string into a number. """
-    # Rely on the fact that attempting to convert a string that represents a
-    # float in python will raise ValueError.
-    try:
-        num = int(item_str)
-    except ValueError:
-        num = float(item_str)
-    return num
-
-# ----------------------------------------------------------------------------
 def _arg_to_range(range_arg):
     """Converts a single range arg to a Range object."""
     _ranges = _arg_to_ranges(range_arg)
@@ -773,7 +787,7 @@ def _parse_range_str(range_str):
             step = groups[14]
 
         # convert each to a number
-        (start, stop, step) = [_str_to_num(s) for s in [start, stop, step]]
+        (start, stop, step) = [Decimal(str(s)) for s in [start, stop, step]]
     else:
         raise SyntaxError(
             "Unable to parse range specification: '{s}'".\

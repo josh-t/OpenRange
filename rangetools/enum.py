@@ -73,7 +73,7 @@ class EnumRange(Range):
         for i in super(EnumRange, self).__iter__():
             yield i, self._sequence[i]
 
-# ----------------------------------------------------------------------------
+# ------------------------------------------------------------------------
 def _to_num(val, lookup):
 
     try:
