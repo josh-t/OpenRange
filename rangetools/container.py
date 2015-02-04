@@ -1,5 +1,5 @@
 
-from collections import Sequence, MutableMapping, MutableSequence
+from collections import MutableMapping, MutableSequence
 from copy import deepcopy
 from decimal import Decimal
 from itertools import count, groupby

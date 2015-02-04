@@ -5,63 +5,346 @@ class TestRange(unittest.TestCase):
     def setUp(self):
         pass
 
-    def test_range_args(self):
-        # non numeric argument
+    # __init__ tests
+
+    def test_start_none(self):
         args = [None]
         self.assertRaises(ValueError, Range, *args)
 
-        # step cannot be 0
-        args = [1,1,0]
-        self.assertRaises(ValueError, Range, *args)
+    def test_step_0(self):
+        args = [1, 1]
+        kwargs = {'step': 0}
+        self.assertRaises(ValueError, Range, *args, **kwargs)
 
-        # repeat must be integer
+    def test_repeat_non_int(self):
         args = [1,2,1]
         kwargs = {'repeat': 1.5}
         self.assertRaises(ValueError, Range, *args, **kwargs)
 
-        # repeat must be greater than or equal to 1
+    def test_repeat_not_zero(self):
         args = [1,2,1]
-        kwargs = {'repeat': -0.5}
+        kwargs = {'repeat': 0}
         self.assertRaises(ValueError, Range, *args, **kwargs)
 
-    def test_basic_range(self):
-        # Only start argument
+    # __iter__ tests
+
+    def test_single_int(self):
+        rng = Range(2)
+        items = [x for x in rng]
+        self.assertIsInstance(items[0], int)
+        self.assertEquals(items, [2])
+
+    def test_single_float(self):
         rng = Range(2.3)
         items = [x for x in rng]
+        self.assertIsInstance(items[0], float)
         self.assertEquals(items, [2.3])
 
-        # start equals stop
+    def test_same_start_stop_int(self):
+        rng = Range(7, 7)
+        items = [x for x in rng]
+        self.assertIsInstance(items[0], int)
+        self.assertEquals(items, [7])
+
+    def test_same_start_stop_float(self):
         rng = Range(-1.3, -1.3)
         items = [x for x in rng]
+        self.assertIsInstance(items[0], float)
         self.assertEquals(items, [-1.3])
 
-        # integer start integer stop, ascending step by one
+    def test_ascending_step_1(self):
         rng = Range(0,2,1)
         items = [x for x in rng]
         self.assertEquals(items, [0, 1, 2])
 
-        # integer start float stop, ascending step by one
+    def test_ascending_int_start_float_stop(self):
         rng = Range(-1, .5, 1)
         items = [x for x in rng]
         self.assertEquals(items, [-1, 0])
 
-        # float start float stop, ascending step by one
+    def test_float_ascending_int_step(self):
         rng = Range(.5, 2.5, 1)
         items = [x for x in rng]
         self.assertEquals(items, [0.5, 1.5, 2.5])
 
-        # float step
+    def test_int_ascending_float_step(self):
         rng = Range(1, 2, .3)
         items = [x for x in rng]
         self.assertEquals(items, [1, 1.3, 1.6, 1.9])
 
-        # negative float step
+    def test_descending_float_step(self):
         rng = Range(10, 8.5, -0.5)
         items = [x for x in rng]
         self.assertEquals(items, [10, 9.5, 9.0, 8.5])
 
-        # First step is outside bounds.
+    def test_step_opposited_direction(self):
         rng = Range(0, 1, -1)
         items = [x for x in rng]
         self.assertEquals(items, [0])
+
+    # __contains__ tests
+
+    def test_contains_int(self):
+        rng = Range(0, 10, 2)
+        self.assertTrue(4 in rng)
+        self.assertFalse(5 in rng)
+        self.assertFalse(-1 in rng)
+        self.assertFalse(11 in rng)
+
+    def test_contains_float(self):
+        rng = Range(.1, 1.1, .2)
+        self.assertTrue(.5 in rng)
+        self.assertFalse(.6 in rng)
+        self.assertFalse(.05 in rng)
+        self.assertFalse(1.2 in rng)
+
+    # __eq__ tests
+
+    def test_equals(self):
+        rng1 = Range(0, 10, 2)
+        rng2 = Range(0, 10, 2)
+        rng3 = Range(0.0, 10.0, 2.0)
+        rng4 = Range(0.1, 10, 2.0)
+        rng5 = Range(10, 0, -2)
+        self.assertTrue(rng1 == rng2)
+        self.assertTrue(rng1 == rng3)
+        self.assertFalse(rng1 == rng4)
+        self.assertFalse(rng1 == rng5)
+        
+    # __repr__ tests
+
+    def test_int_repr(self):
+        rng = Range(0, 10, 2)
+        self.assertEquals(repr(rng), 'Range("0-10:2")')
+
+    def test_float_repr(self):
+        rng = Range(0.1, 1., 2.)
+        self.assertEquals(repr(rng), 'Range("0.1-1.0:2.0")')
+
+    def test_mixed_repr(self):
+        rng = Range(0.1, 10, 2.)
+        self.assertEquals(repr(rng), 'Range("0.1-10:2.0")')
+
+    # __str__ tests
+
+    def test_single_int_str(self):
+        rng = Range(1)
+        self.assertEquals(str(rng), "1")
+
+    def test_default_step_str(self):
+        rng = Range(1, 10)
+        self.assertEquals(str(rng), "1-10")
+
+    def test_int_str(self):
+        rng = Range(0, 10, 2)
+        self.assertEquals(str(rng), "0-10:2")
+
+    def test_float_str(self):
+        rng = Range(0.1, 1., 2.)
+        self.assertEquals(str(rng), "0.1-1.0:2.0")
+
+    def test_mixed_str(self):
+        rng = Range(0.1, 10, 2.)
+        self.assertEquals(str(rng), "0.1-10:2.0")
+    
+    # enumerate tests
+
+    def test_enumerate_int(self):
+        rng = Range(0, 4, 2)
+        items = [i for i in rng.enumerate()]
+        self.assertEquals(items, [(0, 0), (1, 2), (2, 4)])
+
+    def test_enumerate_float(self):
+        rng = Range(0, .4, .2)
+        items = [i for i in rng.enumerate()]
+        self.assertEquals(items, [(0, 0), (1, .2), (2, .4)])
+
+    def test_enumerate_start(self):
+        rng = Range(0, 4, 2)
+        items = [i for i in rng.enumerate(start=3)]
+        self.assertEquals(items, [(3, 0), (4, 2), (5, 4)])
+
+    # first_middle_last tests
+
+    def test_single_int_range(self):
+        rng = Range(42)
+        self.assertEquals(rng.first_middle_last(), (42, 42, 42))
+
+    def test_int_range(self):
+        rng = Range(0, 4, 2)
+        self.assertEquals(rng.first_middle_last(), (0, 2, 4))
+
+    def test_float_range(self):
+        rng = Range(0, .4, .2)
+        self.assertEquals(rng.first_middle_last(), (0, .2, .4))
+
+    def test_int_range_even_number_of_items(self):
+        rng = Range(0, 10, 2)
+        self.assertEquals(rng.first_middle_last(), (0, 4, 10))
+
+    # reverse tests
+
+    def test_int_asc_to_desc(self):
+        rng = Range(0, 10, 2, repeat=3)
+        rng.reverse()
+        self.assertEquals(rng.start, 10)
+        self.assertEquals(rng.stop, 0)
+        self.assertEquals(rng.step, -2)
+        self.assertEquals(rng.repeat, 3)
+
+    def test_int_desc_to_asc(self):
+        rng = Range(10, 0, -2, repeat=3)
+        rng.reverse()
+        self.assertEquals(rng.start, 0)
+        self.assertEquals(rng.stop, 10)
+        self.assertEquals(rng.step, 2)
+        self.assertEquals(rng.repeat, 3)
+
+    def test_float_asc_to_desc(self):
+        rng = Range(0, 1.0, .2, repeat=3)
+        rng.reverse()
+        self.assertEquals(rng.start, 1.0)
+        self.assertEquals(rng.stop, 0)
+        self.assertEquals(rng.step, -.2)
+        self.assertEquals(rng.repeat, 3)
+
+    def test_float_desc_to_asc(self):
+        rng = Range(1.0, 0, -.2, repeat=3)
+        rng.reverse()
+        self.assertEquals(rng.start, 0)
+        self.assertEquals(rng.stop, 1.0)
+        self.assertEquals(rng.step, .2)
+        self.assertEquals(rng.repeat, 3)
+
+    # property getter tests
+
+    def test_int_range_properties_get(self):
+        rng = Range(0, 10, 2, repeat=3)
+        self.assertIsInstance(rng.start, int)
+        self.assertEquals(rng.start, 0)
+        self.assertIsInstance(rng.stop, int)
+        self.assertEquals(rng.stop, 10)
+        self.assertIsInstance(rng.step, int)
+        self.assertEquals(rng.step, 2)
+        self.assertIsInstance(rng.repeat, int)
+        self.assertEquals(rng.repeat, 3)
+
+    def test_float_range_properties_get(self):
+        rng = Range(0.1, 1.0, .2, repeat=3)
+        self.assertIsInstance(rng.start, float)
+        self.assertEquals(rng.start, 0.1)
+        self.assertIsInstance(rng.stop, float)
+        self.assertEquals(rng.stop, 1.0)
+        self.assertIsInstance(rng.step, float)
+        self.assertEquals(rng.step, .2)
+        self.assertIsInstance(rng.repeat, int)
+        self.assertEquals(rng.repeat, 3)
+
+    # property setter tests
+
+    def test_int_range_property_set(self):
+        rng = Range(0, 10, 2, repeat=3)
+        rng.start = 1
+        rng.stop = 11
+        rng.step = 3
+        rng.repeat = 2
+        self.assertEquals(rng.start, 1)
+        self.assertEquals(rng.stop, 11)
+        self.assertEquals(rng.step, 3)
+        self.assertEquals(rng.repeat, 2)
+        self.assertRaises(ValueError, lambda: setattr(rng, 'repeat', 'a'))
+        self.assertRaises(ValueError, lambda: setattr(rng, 'repeat', '0'))
+        self.assertRaises(ValueError, lambda: setattr(rng, 'repeat', '-1'))
+        self.assertRaises(ValueError, lambda: setattr(rng, 'repeat', '.1'))
+
+    def test_float_range_property_set(self):
+        rng = Range(0.1, 1.0, .2, repeat=3)
+        rng.start = .2
+        rng.stop = 1.1
+        rng.step = .3
+        rng.repeat = 2
+        self.assertEquals(rng.start, .2)
+        self.assertEquals(rng.stop, 1.1)
+        self.assertEquals(rng.step, .3)
+        self.assertEquals(rng.repeat, 2)
+
+    # __getitem__ tests
+
+    def test_int_range_indexing(self):
+        rng = Range(1, 10, 2)
+        self.assertEquals(rng[0], 1)
+        self.assertEquals(rng[1], 3)
+        self.assertEquals(rng[2], 5)
+        self.assertEquals(rng[3], 7)
+        self.assertEquals(rng[4], 9)
+
+    def test_int_range_indexing_with_repeat(self):
+        rng = Range(1, 10, 2, repeat=2)
+        self.assertEquals(rng[0], 1)
+        self.assertEquals(rng[1], 3)
+        self.assertEquals(rng[2], 5)
+        self.assertEquals(rng[3], 7)
+        self.assertEquals(rng[4], 9)
+        self.assertEquals(rng[5], 1)
+        self.assertEquals(rng[6], 3)
+        self.assertEquals(rng[7], 5)
+        self.assertEquals(rng[8], 7)
+        self.assertEquals(rng[9], 9)
+
+    def test_float_range_indexing(self):
+        rng = Range(.1, 1.0, .2)
+        self.assertEquals(rng[0], .1)
+        self.assertEquals(rng[1], .3)
+        self.assertEquals(rng[2], .5)
+        self.assertEquals(rng[3], .7)
+        self.assertEquals(rng[4], .9)
+
+    def test_float_range_indexing_with_repeat(self):
+        rng = Range(.1, 1.0, .2, repeat=2)
+        self.assertEquals(rng[0], .1)
+        self.assertEquals(rng[1], .3)
+        self.assertEquals(rng[2], .5)
+        self.assertEquals(rng[3], .7)
+        self.assertEquals(rng[4], .9)
+        self.assertEquals(rng[5], .1)
+        self.assertEquals(rng[6], .3)
+        self.assertEquals(rng[7], .5)
+        self.assertEquals(rng[8], .7)
+        self.assertEquals(rng[9], .9)
+
+    # __len__ tests
+
+    def test_len_single(self):
+        rng = Range(0, 10, 2)
+        self.assertEquals(len(rng), 6)
+
+    def test_len_repeat(self):
+        rng = Range(0, 10, 2, repeat=2)
+        self.assertEquals(len(rng), 12)
+
+    # index tests
+
+    def test_index_int(self):
+        rng = Range(0, 10, 2)
+        self.assertEquals(rng.index(4), 2)
+
+    def test_index_float(self):
+        rng = Range(0, 1.0, .2)
+        self.assertEquals(rng.index(.4), 2)
+
+    def test_not_in_range(self):
+        rng = Range(0, 10, 2)
+        self.assertRaises(ValueError, rng.index, 1)
+        self.assertRaises(ValueError, rng.index, -1)
+        self.assertRaises(ValueError, rng.index, 11)
+
+    # count tests
+
+    def test_count_simple(self):
+        rng = Range(0, 10, 2)
+        self.assertEquals(rng.count(4), 1)
+
+    def test_count_repeat(self):
+        rng = Range(0, 10, 2, repeat=4)
+        self.assertEquals(rng.count(4), 4)
 

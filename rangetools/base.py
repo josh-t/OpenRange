@@ -3,6 +3,7 @@
 # ----------------------------------------------------------------------------
 
 from abc import ABCMeta, abstractmethod
+from collections import Sequence
 from itertools import count
 
 from .shared import first_middle_last as fml
@@ -14,37 +15,45 @@ __all__ = [
 ]
 
 # ----------------------------------------------------------------------------
-# XXX class BaseRange(Sequence):
-class BaseRange(object):
+class BaseRange(Sequence):
     
     __metaclass__ = ABCMeta
 
     # ------------------------------------------------------------------------
     def __contains__(self, item):
 
-        item = self.to_num(i)
+        item = self.to_num(item)
 
-        if self.step > 0:
-            if item < self.start or item > self.stop:
+        if self._step > 0:
+            if item < self._start or item > self._stop:
                 return False
         else:
-            if item > self.start or item < self.stop:
+            if item > self._start or item < self._stop:
                 return False
 
-        return ((item - self.start) % self.step) == 0
+        return ((item - self._start) % self._step) == 0
 
     # ------------------------------------------------------------------------
-    # XXX this the best way?
     def __eq__(self, other):
         """Equals comparator.
 
         Returns:
             bool: Whether the two objects compare as equal.
+
+        Start, stop, step, and repeat must be the same.
+
         """
-        return str(self) == str(other)
+        return self.start == other.start and \
+               self.stop == other.stop and \
+               self.step == other.step and \
+               self.repeat == other.repeat
 
     # ------------------------------------------------------------------------
-    # XXX def __getitem__
+    def __getitem__(self, index):
+
+        for count, value in self.enumerate():
+            if count == index:
+                return value
 
     # ------------------------------------------------------------------------
     def __init__(self, start, stop=None, step=1, repeat=1):
@@ -94,19 +103,22 @@ class BaseRange(object):
             1 3 5 7 9
         """
 
-        item = self.start
+        item = self._start
         repeats_counter = 1
         while repeats_counter <= self.repeat:
             yield self.to_value(item)
-            item += self.step
+            item += self._step
 
-            if ((self.step > 0 and item > self.stop) or
-                (self.step < 0 and item < self.stop)):
+            if ((self._step > 0 and item > self._stop) or
+                (self._step < 0 and item < self._stop)):
                 repeats_counter += 1
-                item = self.start
+                item = self._start
 
     # ------------------------------------------------------------------------
-    # XXX def __len__
+    def __len__(self):
+        
+        items = [i for i in self]
+        return len(items)
 
     # ------------------------------------------------------------------------
     def __repr__(self):
@@ -150,12 +162,9 @@ class BaseRange(object):
         """
 
         if self.start == self.stop:
-            spec = str(self.to_value(self.start))
+            spec = str(self.start)
         else:
-            spec = "{start}-{stop}".format(
-                start=self.to_value(self.start), 
-                stop=self.to_value(self.stop),
-            )
+            spec = "{start}-{stop}".format(start=self.start, stop=self.stop)
             if self.step != 1:
                 spec += ":" + str(self.step)
 
@@ -165,14 +174,27 @@ class BaseRange(object):
         return spec
 
     # ------------------------------------------------------------------------
-    # XXX def index
+    def index(self, value):
+
+        for count, i in self.enumerate():
+            if value == i:
+                return count
+
+        raise ValueError("{v} is not in this Range".format(v=value))
 
     # ------------------------------------------------------------------------
-    # XXX def count
+    def count(self, value):
+
+        count = 0
+        for i in self:
+            if value == i:
+                count += 1
+        
+        return count
 
     # ------------------------------------------------------------------------
     def enumerate(self, start=0):
-        c = count()
+        c = count(start=start)
         for i in self:
             yield (next(c), i)
 
@@ -181,10 +203,10 @@ class BaseRange(object):
         """Returns the first, middle, and last items of this range."""
 
         # fast path for a simple range
-        if self.step == 1 and isinstance(self.start, int) and \
-           isinstance(self.stop, int):
-            middle = int((self.start + self.stop) / 2)
-            return (self.start, middle, self.stop)
+        if self._step == 1 and isinstance(self._start, int) and \
+           isinstance(self._stop, int):
+            middle = int((self._start + self._stop) / 2)
+            return (self._start, middle, self._stop)
 
         # slow and sure method
         return fml(self)
@@ -202,8 +224,8 @@ class BaseRange(object):
     # ------------------------------------------------------------------------
     def reverse(self):
         """Reverses the range in place."""
-        (self.start, self.stop) = (self.stop, self.start)
-        self.step *= -1
+        (self._start, self._stop) = (self._stop, self._start)
+        self._step *= -1
 
     # ------------------------------------------------------------------------
     @property
@@ -224,7 +246,7 @@ class BaseRange(object):
     @property
     def start(self):
         """The start value for this range."""
-        return self._start
+        return self.to_value(self._start)
 
     # ------------------------------------------------------------------------
     @start.setter
@@ -235,7 +257,7 @@ class BaseRange(object):
     @property
     def step(self):
         """The step value for this range."""
-        return self._step
+        return self.to_value(self._step)
 
     # ------------------------------------------------------------------------
     @step.setter
@@ -246,7 +268,7 @@ class BaseRange(object):
     @property
     def stop(self):
         """The stop value for this range."""
-        return self._stop
+        return self.to_value(self._stop)
 
     # ------------------------------------------------------------------------
     @stop.setter
