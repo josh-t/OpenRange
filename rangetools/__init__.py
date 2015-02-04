@@ -2,7 +2,7 @@
 from pkg_resources import get_distribution, DistributionNotFound
 
 from .base import BaseRange
-from .collections import RangeDict, RangeList
+from .container import RangeDict, RangeList
 from .date import DateRange, DatetimeRange, TimeRange
 from .enum import EnumRange
 from .funcs import irange, range_str

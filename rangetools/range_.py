@@ -1,4 +1,6 @@
 
+from decimal import Decimal
+
 from .base import BaseRange
 
 # ------------------------------------------------------------------------

@@ -1,8 +1,12 @@
 
 from collections import Sequence, MutableMapping, MutableSequence
+from copy import deepcopy
+from decimal import Decimal
+from itertools import count, groupby
+from numbers import Number
+import re
 
-from .compatibility import built_in_range
-from .funcs import first_middle_last
+from .shared import first_middle_last as fml
 
 # ----------------------------------------------------------------------------
 
@@ -10,6 +14,13 @@ __all__ = [
     'RangeDict',
     'RangeList',
 ]
+
+# ----------------------------------------------------------------------------
+
+try:
+    built_in_rnage = xrange
+except NameError:
+    built_in_range = range
 
 # ----------------------------------------------------------------------------
 

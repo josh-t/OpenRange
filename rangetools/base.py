@@ -3,13 +3,9 @@
 # ----------------------------------------------------------------------------
 
 from abc import ABCMeta, abstractmethod
-from copy import deepcopy
-from decimal import Decimal
-from itertools import count, groupby
-from numbers import Number
-import re
+from itertools import count
 
-from .funcs import first_middle_last as fml
+from .shared import first_middle_last as fml
 
 # ----------------------------------------------------------------------------
 
@@ -64,6 +60,9 @@ class BaseRange(object):
             ValueError: Start, stop, or step values are non numeric, or if
                 the given repeat value is non-integer or less than 1.
         """
+        if start is None:
+            raise ValueError("Start value cannot be none.")
+
         if stop is None:
             stop = start
 
