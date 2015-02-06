@@ -2,6 +2,7 @@ import unittest
 from rangetools import Range
 
 class TestRange(unittest.TestCase):
+
     def setUp(self):
         pass
 

@@ -2,7 +2,7 @@
 from collections import MutableMapping, MutableSequence
 from copy import deepcopy
 from decimal import Decimal
-from itertools import count, groupby
+from itertools import chain, count, groupby
 from numbers import Number
 import re
 
@@ -11,7 +11,6 @@ from .shared import first_middle_last as fml
 # ----------------------------------------------------------------------------
 
 __all__ = [
-    'RangeDict',
     'RangeList',
 ]
 
@@ -27,17 +26,13 @@ except NameError:
 # Optionally signed int or float
 NUM_SPEC = "([+-]?(\d+\.?|\d*\.\d+))"
 
-# XXX account for new repeat syntax... wip
-#RANGE_SPEC_REGEX = re.compile(
-#    "^(({i})(-({i})(:({i}))?)?(x({i}))?)".format(i=NUM_SPEC)
-#)
-
+# XXX account for repeat syntax
+# XXX account for exclude syntax
 # Range specification
 RANGE_SPEC_REGEX = re.compile(
-    "^(({i})|({i}-{i})|({i}-{i}:{i}))$".format(i=NUM_SPEC)
+    "^(({i})|({i}-{i})|({i}-{i}:{i})(x({i}))?)$".format(i=NUM_SPEC)
 )
-# Match positions for RANGE_SPEC_REGEX:
-#
+# Match positions:
 # 0 = entire match
 # 1 = single frame match
 # 4 = start-stop (no step) match
@@ -47,62 +42,10 @@ RANGE_SPEC_REGEX = re.compile(
 # 10 = start if 9
 # 12 = stop if 9
 # 14 = step if 9
+# 16 = repeat
 
 # A separator regex for parsing a list of range specifications
 SPEC_SEPARATOR_REGEX = re.compile("\s*,\s*")
-
-# ----------------------------------------------------------------------------
-class RangeDict(MutableMapping):
-
-    # ------------------------------------------------------------------------
-    def __delitem__(self, key):
-        del self._ranges[key]
-
-    # ------------------------------------------------------------------------
-    def __getitem__(self, key):
-        return self._ranges[key]
-
-    # ------------------------------------------------------------------------
-    def __init__(self, ranges_dict):
-
-        self._ranges = {}
-        
-        for (key, range_arg) in ranges_dict.items():
-            self._ranges[key] = _arg_to_range(range_arg)
-
-    # ------------------------------------------------------------------------
-    def __iter__(self):
-
-        for name in self._ranges.keys():
-            for i in self._ranges[name]:
-                yield i
-            
-    # ------------------------------------------------------------------------
-    def __len__(self):
-        return len(self._ranges.keys())
-
-    # ------------------------------------------------------------------------
-    def __setitem__(self, key, value):
-        self._ranges[key] = value
-
-    # XXX 
-    # pop
-    # popitem
-    # clear
-    # update
-    # setdefault
-
-    # ------------------------------------------------------------------------
-    @property
-    def ranges(self):
-        for (name, _range) in self._ranges.items():
-            yield (name, _range)
-
-    # ------------------------------------------------------------------------
-    @property
-    def range_names(self):
-        for name in self._ranges.keys():
-            yield name
 
 # ----------------------------------------------------------------------------
 class RangeList(MutableSequence):
@@ -182,9 +125,7 @@ class RangeList(MutableSequence):
 
     # ------------------------------------------------------------------------
     def __iter__(self):
-        for _range in self._ranges:
-            for item in _range:
-                yield item
+        chain(*self._ranges)
 
     # ------------------------------------------------------------------------
     def __len__(self):

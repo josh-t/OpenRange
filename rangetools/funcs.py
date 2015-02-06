@@ -1,6 +1,6 @@
 """Functions for expanded numerical range processing."""
 
-from .container import RangeList
+from .list_ import RangeList
 from .range_ import Range
 
 # ----------------------------------------------------------------------------

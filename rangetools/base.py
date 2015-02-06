@@ -75,7 +75,7 @@ class BaseRange(Sequence):
         if stop is None:
             stop = start
 
-        if 0 == self.to_num(step):
+        if 0 == self.step_to_num(step):
             raise ValueError("Range step cannot be 0.")
 
         try:
@@ -222,6 +222,14 @@ class BaseRange(Sequence):
         pass
 
     # ------------------------------------------------------------------------
+    def step_to_num(self, step_value):
+        return self.to_num(step_value)
+
+    # ------------------------------------------------------------------------
+    def step_to_value(self, step_num):
+        return self.to_value(step_num)
+
+    # ------------------------------------------------------------------------
     def reverse(self):
         """Reverses the range in place."""
         (self._start, self._stop) = (self._stop, self._start)
@@ -262,7 +270,7 @@ class BaseRange(Sequence):
     # ------------------------------------------------------------------------
     @step.setter
     def step(self, step):
-        self._step = self.to_num(step)
+        self._step = self.step_to_num(step)
 
     # ------------------------------------------------------------------------
     @property
