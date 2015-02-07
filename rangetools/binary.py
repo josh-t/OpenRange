@@ -1,28 +1,24 @@
-
 from .base import BaseRange
 
 # ----------------------------------------------------------------------------
 
 __all__ = [
-    'AsciiRange',
+    'BinaryStrRange',
 ]
 
 # ----------------------------------------------------------------------------
-class AsciiRange(BaseRange):
+class BinaryStrRange(BaseRange):
+
+    # ------------------------------------------------------------------------
+    def __init__(self, *args, **kwargs):
+        self._padding = kwargs.pop('padding', 0)
+        super(BinaryStrRange, self).__init__(*args, **kwargs)
 
     # ------------------------------------------------------------------------
     def to_num(self, value):
-        return ord(value)
+        return int(str(value), 2)
        
     # ------------------------------------------------------------------------
     def to_value(self, num):
-        return chr(num)
-
-    # ------------------------------------------------------------------------
-    def step_to_num(self, value):
-        return int(value)
-
-    # ------------------------------------------------------------------------
-    def step_to_value(self, num):
-        return num
+        return "{n:b}".format(n=num).zfill(self._padding)
 
