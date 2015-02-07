@@ -101,7 +101,7 @@ class RangeList(MutableSequence):
         """Initializes a new RangeList.
 
         Args:
-            ranges_arg: May be a RangeList, Range, basestring, Number, or
+            ranges_arg: May be a RangeList, Range, str, Number, or
                 an iterable containing any of the previously mentioned.
             separator(str): The separator to use when splitting the input ranges.
                 Default is ','.
@@ -259,7 +259,7 @@ def _arg_to_ranges(ranges_arg):
     elif isinstance(ranges_arg, Range):
         # Range
         ranges.append(deepcopy(ranges_arg))
-    elif isinstance(ranges_arg, basestring):
+    elif isinstance(ranges_arg, str):
         # String spec
         ranges.extend(_spec_to_ranges(ranges_arg))
     elif isinstance(ranges_arg, Number):

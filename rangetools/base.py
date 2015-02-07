@@ -6,6 +6,8 @@ from abc import ABCMeta, abstractmethod
 from collections import Sequence
 from itertools import count
 
+from six import add_metaclass
+
 from .shared import first_middle_last as fml
 
 # ----------------------------------------------------------------------------
@@ -15,10 +17,9 @@ __all__ = [
 ]
 
 # ----------------------------------------------------------------------------
+@add_metaclass(ABCMeta)
 class BaseRange(Sequence):
     
-    __metaclass__ = ABCMeta
-
     # ------------------------------------------------------------------------
     def __contains__(self, item):
 
