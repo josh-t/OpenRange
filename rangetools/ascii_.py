@@ -9,6 +9,21 @@ __all__ = [
 
 # ----------------------------------------------------------------------------
 class AsciiRange(BaseRange):
+    "An iterable range of ascii characters.
+
+    Every 4th lowercase letter, starting with 'a':
+
+        >>> from rangetools import AsciiRange
+        >>> [a for a in AsciiRange('a', 'z', step=4)]
+        ['a', 'e', 'i', 'm', 'q', 'u', 'y']
+
+    Every 5th uppercase letter, starting with 'B':
+
+        >>> [a for a in AsciiRange('B', 'Z', step=5)]
+        ['B', 'G', 'L', 'Q', 'V']
+
+
+    """
 
     # ------------------------------------------------------------------------
     def to_num(self, value):
