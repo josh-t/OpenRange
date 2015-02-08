@@ -195,9 +195,10 @@ class BaseRange(Sequence):
 
     # ------------------------------------------------------------------------
     def enumerate(self, start=0):
-        c = count(start=start)
+        c = start
         for i in self:
-            yield (next(c), i)
+            yield (c, i)
+            c += 1
 
     # ------------------------------------------------------------------------
     def first_middle_last(self):

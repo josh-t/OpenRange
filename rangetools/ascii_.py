@@ -9,7 +9,7 @@ __all__ = [
 
 # ----------------------------------------------------------------------------
 class AsciiRange(BaseRange):
-    "An iterable range of ascii characters.
+    """An iterable range of ascii characters.
 
     Every 4th lowercase letter, starting with 'a':
 

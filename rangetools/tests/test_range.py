@@ -32,25 +32,25 @@ class TestRange(unittest.TestCase):
     def test_single_int(self):
         rng = Range(2)
         items = [x for x in rng]
-        self.assertIsInstance(items[0], int)
+        self.assertTrue(isinstance(items[0], int))
         self.assertEqual(items, [2])
 
     def test_single_float(self):
         rng = Range(2.3)
         items = [x for x in rng]
-        self.assertIsInstance(items[0], float)
+        self.assertTrue(isinstance(items[0], float))
         self.assertEqual(items, [2.3])
 
     def test_same_start_stop_int(self):
         rng = Range(7, 7)
         items = [x for x in rng]
-        self.assertIsInstance(items[0], int)
+        self.assertTrue(isinstance(items[0], int))
         self.assertEqual(items, [7])
 
     def test_same_start_stop_float(self):
         rng = Range(-1.3, -1.3)
         items = [x for x in rng]
-        self.assertIsInstance(items[0], float)
+        self.assertTrue(isinstance(items[0], float))
         self.assertEqual(items, [-1.3])
 
     def test_ascending_step_1(self):
@@ -221,24 +221,24 @@ class TestRange(unittest.TestCase):
 
     def test_int_range_properties_get(self):
         rng = Range(0, 10, 2, repeat=3)
-        self.assertIsInstance(rng.start, int)
+        self.assertTrue(isinstance(rng.start, int))
         self.assertEqual(rng.start, 0)
-        self.assertIsInstance(rng.stop, int)
+        self.assertTrue(isinstance(rng.stop, int))
         self.assertEqual(rng.stop, 10)
-        self.assertIsInstance(rng.step, int)
+        self.assertTrue(isinstance(rng.step, int))
         self.assertEqual(rng.step, 2)
-        self.assertIsInstance(rng.repeat, int)
+        self.assertTrue(isinstance(rng.repeat, int))
         self.assertEqual(rng.repeat, 3)
 
     def test_float_range_properties_get(self):
         rng = Range(0.1, 1.0, .2, repeat=3)
-        self.assertIsInstance(rng.start, float)
+        self.assertTrue(isinstance(rng.start, float))
         self.assertEqual(rng.start, 0.1)
-        self.assertIsInstance(rng.stop, float)
+        self.assertTrue(isinstance(rng.stop, float))
         self.assertEqual(rng.stop, 1.0)
-        self.assertIsInstance(rng.step, float)
+        self.assertTrue(isinstance(rng.step, float))
         self.assertEqual(rng.step, .2)
-        self.assertIsInstance(rng.repeat, int)
+        self.assertTrue(isinstance(rng.repeat, int))
         self.assertEqual(rng.repeat, 3)
 
     # property setter tests

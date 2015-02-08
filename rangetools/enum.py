@@ -18,7 +18,7 @@ class EnumRange(Range):
             seq_list = list(enumerate(sequence))
             
         self._sequence = dict(seq_list)
-        lookup = {v: k for k, v in list(self._sequence.items())}
+        lookup = dict((v, k) for (k, v) in list(self._sequence.items()))
 
         # start
         if start is None:

@@ -11,7 +11,7 @@ from setuptools import setup, find_packages
 # path to this file's directory
 PROJECT_ROOT = path.normpath(path.join(path.abspath(__file__), pardir))
 
-with open(path.join(PROJECT_ROOT, 'README.md'), encoding='utf-8') as f:
+with open(path.join(PROJECT_ROOT, 'README.rst'), encoding='utf-8') as f:
     LONG_DESCRIPTION = f.read()
 
 # -----------------------------------------------------------------------------
