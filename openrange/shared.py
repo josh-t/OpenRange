@@ -1,4 +1,16 @@
 
+__all__ = [
+    'built_in_range',
+    'first_middle_last',
+]
+
+# ----------------------------------------------------------------------------
+
+try:
+    built_in_range = xrange
+except NameError:
+    built_in_range = range
+
 # ----------------------------------------------------------------------------
 def first_middle_last(items):
     """Given a list of items, return the first, middle, and last item"""

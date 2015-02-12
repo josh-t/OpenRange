@@ -1,4 +1,4 @@
-"""rangetools installer"""
+"""OpenRange installer"""
 
 # -----------------------------------------------------------------------------
 
@@ -34,9 +34,9 @@ setup(
     keywords="range ranges tools rangetool rangelist inclusive",
     license='MIT',
     long_description=LONG_DESCRIPTION,
-    name='rangetools',
+    name='openrange',
     packages=find_packages(),
-    url="https://github.com/josh-t/rangetools",
+    url="https://github.com/josh-t/openrange",
     version='0.0.1',
 )
 

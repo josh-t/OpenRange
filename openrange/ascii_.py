@@ -13,7 +13,7 @@ class AsciiRange(BaseRange):
 
     Every 4th lowercase letter, starting with 'a':
 
-        >>> from rangetools import AsciiRange
+        >>> from openrange import AsciiRange
         >>> [a for a in AsciiRange('a', 'z', step=4)]
         ['a', 'e', 'i', 'm', 'q', 'u', 'y']
 

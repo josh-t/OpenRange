@@ -14,7 +14,7 @@ __all__ = [
 def irange(start, stop=None, step=None):
     """Similar to the built-in range(), but returns an inclusive iterator.
 
-    >>> from rangetools import irange
+    >>> from openrange import irange
     >>> for i in irange(0, 10):
     >>>     print str(i),
     0 1 2 3 4 5 6 7 8 9 10
@@ -26,7 +26,7 @@ def irange(start, stop=None, step=None):
 def range_str(ranges_arg, separator=None):
     """Given a range argument, return a compacted str representation.
 
-    >>> from rangetools import range_str
+    >>> from openrange import range_str
     >>> range_str("1,2,3,4,6,8,10,12")
     '1-4,6-12:2'
 

@@ -1,9 +1,9 @@
-.. rangetools documentation master file, created by
+.. openrange documentation master file, created by
    sphinx-quickstart on Sat Jan 31 10:59:16 2015.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to rangetools's documentation!
+Welcome to openrange's documentation!
 ======================================
 
 Contents:

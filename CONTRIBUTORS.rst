@@ -1,4 +1,4 @@
-**rangetools** is written and maintained by various contributors:
+**OpenRange is written and maintained by various contributors:
 
 Development Lead
 ****************

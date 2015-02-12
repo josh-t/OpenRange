@@ -6,6 +6,7 @@ from itertools import chain, count, groupby
 from numbers import Number
 import re
 
+from .shared import built_in_range
 from .shared import first_middle_last as fml
 
 # ----------------------------------------------------------------------------
@@ -13,13 +14,6 @@ from .shared import first_middle_last as fml
 __all__ = [
     'RangeList',
 ]
-
-# ----------------------------------------------------------------------------
-
-try:
-    built_in_rnage = xrange
-except NameError:
-    built_in_range = range
 
 # ----------------------------------------------------------------------------
 

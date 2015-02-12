@@ -1,6 +1,6 @@
 
-rangetools
-==========
+OpenRange
+=========
 
 A collection of classes and functions providing some additional tools for arithmetic progressions. 
 
@@ -26,7 +26,7 @@ The **Range** class is quite similar in usage to python's built-in ``range`` int
 
 .. code-block:: python
 
-    >>> from rangetools import Range
+    >>> from openrange import Range
     >>> for i in Range(0, 10, 2):
     >>>    print i,
     ...
@@ -100,7 +100,7 @@ These types are converted internally to a list of **Range** objects (hence the n
 
 .. code-block:: python
 
-    >>> from rangetools import RangeList
+    >>> from openrange import RangeList
     >>> for i in  RangeList(["1-10:2", "20-30:5", "25-36:4"]):
     ...     print i,
     ... 
@@ -161,7 +161,7 @@ The **EnumRange** class is a subclass of **Range** and provides iterable enumera
 .. code-block:: python
 
     >>> from calendar import day_abbr
-    >>> from rangetools import EnumRange
+    >>> from openrange import EnumRange
     >>> for d in EnumRange(day_abbr, start="Mon", stop="Sun", step=2):
     ...     print d,
     ... 
@@ -213,7 +213,7 @@ A subclass of **Range**, the **DateRange** class provides an iterable range of p
 .. code-block:: python
 
     >>> from datetime import date
-    >>> from rangetools import DateRange
+    >>> from openrange import DateRange
     >>> d1 = date(2015, 1, 1)
     >>> d2 = date(2016, 1, 1)
     >>> for d in DateRange(d1, d2, step='10w'):
@@ -253,7 +253,7 @@ Short for 'inclusive range', **irange** is a convenience function that returns a
 
 .. code-block:: python
 
-    >>> from rangetools import irange
+    >>> from openrange import irange
     >>> for i in irange(0, 10):
     >>>     print i,
     ...
@@ -273,7 +273,7 @@ The **range_str** function accepts any valid **RangeList** argument and returns 
 
 .. code-block:: python
 
-    >>> from rangetools import range_str
+    >>> from openrange import range_str
     >>> range_str("1,2,3,4,6,8,10,12")
     '1-4,6-12:2'
     
@@ -281,7 +281,7 @@ An optional ``separator`` argument is provided to override the default ``,`` sep
 
 .. code-block:: python
 
-    >>> from rangetools import range_str
+    >>> from openrange import range_str
     >>> range_str("1,2,3,4,6,8,10,12", separator="|")
     '1-4|6-12:2'
 
@@ -292,22 +292,21 @@ Signature: ``range_str(ranges_arg, separator=None)``
 Support
 =======
 
-**rangetools** has been tested with:
+**OpenRange** has been tested with:
 
-* python 2.7
-* pythong 3.???    <<< not yet
+* python 2.6, 2.7, 3.2, 3.3, 3.4, pypy, pypy3
 
 Installation
 ============
 
 .. code-block:: bash
 
-    $ pip install rangetools    <<< not yet
+    $ pip install openrange    <<< not yet
 
 Contribute
 ==========
 
-Thanks for checking out **rangetools**! Contribution is welcome from those who propose new features, have ideas for improvement, or submit a bug fixes. Here's a checklist for contributing to this project:
+Thanks for checking out **OpenRange**! Contribution is welcome from those who propose new features, have ideas for improvement, or submit a bug fixes. Here's a checklist for contributing to this project:
 
 #. Check for open issues or open a fresh issue to start a discussion around a feature idea or a bug. 
 #. Fork the repo on GitHub and start making your changes. 
