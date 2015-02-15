@@ -1,8 +1,11 @@
+"""ABC for creating cusotm interval classes."""
 
 # ----------------------------------------------------------------------------
 
 from abc import ABCMeta, abstractmethod
 from collections import Sequence
+from decimal import Decimal
+import random
 
 from six import add_metaclass
 
@@ -56,7 +59,8 @@ class BaseRange(Sequence):
         Returns:
             bool: Whether the two objects compare as equal.
 
-        Start, stop, and step must be the same.
+        Equality is determined by comparing each object's underlying start,
+        stop, and step values numerically.
 
         """
         return self._start == other._start and \
@@ -104,7 +108,7 @@ class BaseRange(Sequence):
                 )
             )
 
-        step = self._item_to_num(step)
+        step = self._step_to_num(step)
 
         if stop is None:
             raise ValueError("Stop value cannot be none.")
@@ -132,12 +136,12 @@ class BaseRange(Sequence):
     def __len__(self):
         # XXX        
 
-        # XXX do this without iterating...
-        count = 0
-        for i in self:
-            count += 1
-        
-        return count
+        # I think this works. Someone smart should review this.
+        diff = abs(self._stop - self._start)
+        num_items = round(Decimal(diff / abs(self._step)))
+        if diff % self._step == 0:
+            num_items += 1
+        return num_items
 
     # ------------------------------------------------------------------------
     def __repr__(self):
@@ -168,27 +172,30 @@ class BaseRange(Sequence):
             return rng_str
         
     # ------------------------------------------------------------------------
-    def index(self, value):
+    def index(self, item):
         # XXX
 
-        for count, i in self.enumerate():
-            if value == i:
-                return count
+        num = self._item_to_num(item)
 
-        raise ValueError(
-            "{v} is not in {c}".format(v=value, c=self.__class__.__name__)
-        )
+        if not self._in_range(num):
+            raise ValueError(
+                "{i} is not in {c}".format(i=item, c=self.__class__.__name__))
+    
+        diff = abs(num - self._start)
+        if not ((num - self._start) % self._step) == 0:
+            raise ValueError(
+                "{i} is not in {c}".format(i=item, c=self.__class__.__name__))
+            
+        return abs(int(diff / self._step))
 
     # ------------------------------------------------------------------------
-    def count(self, value):
+    def count(self, item):
         # XXX
 
-        count = 0
-        for i in self:
-            if value == i:
-                count += 1
-        
-        return count
+        if self.__contains__(item):
+            return 1
+        else:
+            return 0
 
     # ------------------------------------------------------------------------
     def enumerate(self, start=0):
@@ -221,10 +228,14 @@ class BaseRange(Sequence):
         if times < 1:
             raise ValueError("Repeat value must be > 1.")
         
-        # XXX will this work?
         for t in range(times):
             for i in self._iter():
                 yield self._num_to_item(i)
+
+    # ------------------------------------------------------------------------
+    def random(self):
+        for i in random.sample(list(self), len(self)):
+            yield self._num_to_item(i)
 
     # ------------------------------------------------------------------------
     def reverse(self):
@@ -242,7 +253,7 @@ class BaseRange(Sequence):
     @property
     def step(self):
         """The step item for this range."""
-        return self._num_to_item(self._step)
+        return self._num_to_step(self._step)
 
     # ------------------------------------------------------------------------
     @property

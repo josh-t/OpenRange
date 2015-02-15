@@ -1,4 +1,3 @@
-"""Functions for expanded numerical range processing."""
 
 from .list_ import RangeList
 from .range_ import Range
@@ -11,7 +10,7 @@ __all__ = [
 ]
 
 # ----------------------------------------------------------------------------
-def irange(start, stop=None, step=None):
+def irange(*args):
     """Similar to the built-in range(), but returns an inclusive iterator.
 
     >>> from openrange import irange

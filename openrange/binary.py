@@ -11,14 +11,14 @@ class BinaryStrRange(BaseRange):
 
     # ------------------------------------------------------------------------
     def __init__(self, *args, **kwargs):
-        self._padding = kwargs.pop('padding', 0)
+        self._padding = len(args[0])
         super(BinaryStrRange, self).__init__(*args, **kwargs)
 
     # ------------------------------------------------------------------------
-    def to_num(self, value):
-        return int(str(value), 2)
+    def _item_to_num(self, item):
+        return int(str(item), 2)
        
     # ------------------------------------------------------------------------
-    def to_value(self, num):
+    def _num_to_item(self, num):
         return "{n:b}".format(n=num).zfill(self._padding)
 

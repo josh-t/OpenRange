@@ -240,8 +240,20 @@ class TestRange(unittest.TestCase):
     # __len__ tests
 
     def test_len_single(self):
+        rng = Range(32)
+        self.assertEqual(len(rng), 33)
+
+    def test_len(self):
         rng = Range(0, 10, 2)
         self.assertEqual(len(rng), 6)
+
+    def test_len_float_step(self):
+        rng = Range(1, 3, .23)
+        self.assertEqual(len(rng), 9)
+
+    def test_len_negative_step(self):
+        rng = Range(.9, .27, -.08)
+        self.assertEqual(len(rng), 8)
 
     # index tests
 
@@ -252,6 +264,10 @@ class TestRange(unittest.TestCase):
     def test_index_float(self):
         rng = Range(0, 1.0, .2)
         self.assertEqual(rng.index(.4), 2)
+
+    def test_index_negative_step(self):
+        rng = Range(3.7, 1.2, -.3)
+        self.assertEqual(rng.index(3.1), 2)
 
     def test_not_in_range(self):
         rng = Range(0, 10, 2)
