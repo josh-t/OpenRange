@@ -22,11 +22,11 @@ class _DateTypeRange(BaseRange):
     date_type = None
 
     # ------------------------------------------------------------------------
-    def __init__(self, start, stop, step, *args, **kwargs):
+    def __init__(self, start, stop, step):
 
         # require start, stop, and step
         super(_DateTypeRange, self).__init__(
-            start, stop, step, *args, **kwargs)
+            start, stop, step)
 
     # ------------------------------------------------------------------------
     def _item_to_num(self, item):
@@ -74,10 +74,10 @@ class DatetimeRange(_DateTypeRange):
 class TimeRange(BaseRange):
 
     # ------------------------------------------------------------------------
-    def __init__(self, start, stop, step, *args, **kwargs):
+    def __init__(self, start, stop, step):
 
         # require start, stop, and step
-        super(TimeRange, self).__init__(start, stop, step, *args, **kwargs)
+        super(TimeRange, self).__init__(start, stop, step)
 
         # account for day change
         if self._step > 0 and self._stop < self._start:

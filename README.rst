@@ -43,8 +43,6 @@ Another distinguishing characteristic of **Range** objects is that they support 
 
 * **Range** objects require at least a ``start`` value. The ``stop`` and ``step`` arguments are optional. 
 
-# TODO: repeat in str
-
 Stringified **Range** objects take the form ``<start>[-<stop>[:<step>]]``.
 
 .. code-block:: python
@@ -62,15 +60,6 @@ Stringified **Range** objects take the form ``<start>[-<stop>[:<step>]]``.
     >>> print r4
     0.1-1.0:0.2
 
-The ``repeat`` option specifies how many times to iterate over the range. 
-
-.. code-block:: python
-
-    >>> for i in Range(0, 10, 2, repeat=2):
-    ...     print i,
-    ... 
-    0 2 4 6 8 10 0 2 4 6 8 10
-
 **Range** objects also support negative step values.
 
 .. code-block:: python
@@ -82,7 +71,7 @@ The ``repeat`` option specifies how many times to iterate over the range.
 
 * See the **irange** convenience function below for a simplified wrapper around **Range** that behaves similarly to the built-in interface.
 
-Signature: ``Range(start, stop=None, step=1, repeat=1)``
+Signature: ``Range(start, stop, step)``
 
 RangeList
 ---------
@@ -153,58 +142,6 @@ The ``continuous`` method returns True if the **RangeList** has a single contain
 # TODO: if another separator is supplied to constructor, use that when parsing the ranges_arg.
 Signature: ``RangeList(ranges_arg, separator=",")``
 
-EnumRange
----------
-
-The **EnumRange** class is a subclass of **Range** and provides iterable enumeration of a given sequence. 
-
-.. code-block:: python
-
-    >>> from calendar import day_abbr
-    >>> from openrange import EnumRange
-    >>> for d in EnumRange(day_abbr, start="Mon", stop="Sun", step=2):
-    ...     print d,
-    ... 
-    Mon Wed Fri Sun
-
-The ``enumerate`` method yields tuples like python's built-in `enumerate <https://docs.python.org/3/library/functions.html#enumerate>`_ interface.
-
-.. code-block:: python
-
-    >>> for d in EnumRange(day_abbr, start="Mon", stop="Sun", step=2).enumerate():
-    ...     print d,
-    ... 
-    (0, 'Mon') (2, 'Wed') (4, 'Fri') (6, 'Sun')
-    
-An ``enumerate`` object can also be supplied to the constructor which allows the user to control the start value of the underlying count.
-
-.. code-block:: python
-
-    >>> e = enumerate(["cat", "dog", "horse", "chicken", "pig", "cow"], start=7)
-    >>> for i in EnumRange(e, start="dog", step=2).enumerate():
-    ...     print i,
-    ... 
-    (8, 'dog') (10, 'chicken') (12, 'cow')
-    
-The string representation of **EnumRange** objects uses the enumerated values rather than the underlying count.    
-    
-.. code-block:: python
-    
-    >>> e = EnumRange(day_abbr, start="Mon", stop="Sun", step=2)
-    >>> print e
-    Mon-Sun:2
-    
-The optional ``repeat`` argument available on **Range** can be used as well:
-
-.. code-block:: python
-
-    >>> for d in EnumRange(day_abbr, start="Mon", stop="Sun", step=2, repeat=2):
-    ...     print d,
-    ... 
-    Mon Wed Fri Sun Mon Wed Fri Sun 
-    
-Signature: ``EnumRange(sequence, start=None, stop=None, step=1, repeat=None)``
-
 DateRange
 ---------
 
@@ -212,11 +149,12 @@ A subclass of **Range**, the **DateRange** class provides an iterable range of p
 
 .. code-block:: python
 
-    >>> from datetime import date
+    >>> from datetime import date, timedelta
     >>> from openrange import DateRange
     >>> d1 = date(2015, 1, 1)
     >>> d2 = date(2016, 1, 1)
-    >>> for d in DateRange(d1, d2, step='10w'):
+    >>> td = timedelta(days=70)
+    >>> for d in DateRange(d1, d2, td):
     ...     print d
     ... 
     datetime.date(2015, 1, 1)
@@ -230,7 +168,7 @@ A subclass of **Range**, the **DateRange** class provides an iterable range of p
 The ``step`` argument should be a string of the form ... XXX
 
 
-Signature: ``DateRange(start, stop=None, step="1d", repeat=None)``
+Signature: ``DateRange(start, stop, step)``
 
 DatetimeRange
 -------------
@@ -241,7 +179,7 @@ A subclass of **Range**, the **DatetimeRange** class provides an iterable range 
 
 # TODO: example
 
-Signature: ``DatetimeRange(start, stop=None, step="1d", repeat=None)``
+Signature: ``DatetimeRange(start, stop, step)``
 
 Functions
 =========

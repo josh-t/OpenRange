@@ -2,7 +2,6 @@
 from pkg_resources import get_distribution, DistributionNotFound
 
 from .base import BaseRange
-from .binary import BinaryStrRange
 from .date import DateRange, DatetimeRange, TimeRange
 from .funcs import irange, range_str
 from .list_ import RangeList

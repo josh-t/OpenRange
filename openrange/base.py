@@ -4,7 +4,7 @@
 
 from abc import ABCMeta, abstractmethod
 from collections import Sequence
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 import random
 
 from six import add_metaclass
@@ -88,7 +88,7 @@ class BaseRange(Sequence):
             )
 
     # ------------------------------------------------------------------------
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args):
         # XXX
 
         # default values for start/step
@@ -137,11 +137,16 @@ class BaseRange(Sequence):
         # XXX        
 
         # I think this works. Someone smart should review this.
-        diff = abs(self._stop - self._start)
-        num_items = round(Decimal(diff / abs(self._step)))
+        # Basically, account for rounding differences between python 2&3
+        # by using the decimal module and specifying the rounding method.
+        diff = self._stop - self._start
+        num_items = Decimal(str(diff / self._step)).quantize(
+            Decimal('1'), rounding=ROUND_HALF_UP)
+        
         if diff % self._step == 0:
             num_items += 1
-        return num_items
+
+        return int(num_items)
 
     # ------------------------------------------------------------------------
     def __repr__(self):

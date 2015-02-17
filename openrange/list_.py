@@ -1,13 +1,11 @@
 
-from collections import MutableMapping, MutableSequence
+from collections import MutableSequence
 from copy import deepcopy
-from decimal import Decimal
 from itertools import chain, count, groupby
 from numbers import Number
 import re
 
 from .shared import built_in_range
-from .shared import first_middle_last as fml
 
 # ----------------------------------------------------------------------------
 
@@ -20,11 +18,9 @@ __all__ = [
 # Optionally signed int or float
 NUM_SPEC = "([+-]?(\d+\.?|\d*\.\d+))"
 
-# XXX account for repeat syntax
-# XXX account for exclude syntax
 # Range specification
 RANGE_SPEC_REGEX = re.compile(
-    "^(({i})|({i}-{i})|({i}-{i}:{i})(x({i}))?)$".format(i=NUM_SPEC)
+    "^(({i})|({i}-{i})|({i}-{i}:{i}))$".format(i=NUM_SPEC)
 )
 # Match positions:
 # 0 = entire match
@@ -36,7 +32,6 @@ RANGE_SPEC_REGEX = re.compile(
 # 10 = start if 9
 # 12 = stop if 9
 # 14 = step if 9
-# 16 = repeat
 
 # A separator regex for parsing a list of range specifications
 SPEC_SEPARATOR_REGEX = re.compile("\s*,\s*")
@@ -181,9 +176,8 @@ class RangeList(MutableSequence):
     # ------------------------------------------------------------------------
     def first_middle_last(self):
         """Returns the first, middle, and last items of the full sequence."""
-        if len(self._ranges) == 1:
-            return self._ranges[0].first_middle_last()
-        return fml(self)
+        # XXX 
+        pass
 
     # ------------------------------------------------------------------------
     def insert(self, index, range_arg):
@@ -302,9 +296,9 @@ def _items_to_ranges(items):
 
     Take the example above, starting a count with a step of 2:
 
-        items: [1,  4,  5,  6,  7,   9,  11]
-         Count:  0,  2,  4,  6,  8,  10,  12
-        Offset: -1, -2, -1,  0,  1,   1,   1]
+         Items: [ 1,  4,  5,  6,  7,  9, 11]
+         Count: [ 0,  2,  4,  6,  8, 10, 12]
+        Offset: [-1, -2, -1,  0,  1,  1,  1]
 
     The last 3 items, (7, 9, 11), all have the same offset.  A range is
     created for those items with a start of 9, stop of 11, and step of 2.
@@ -375,8 +369,6 @@ def _parse_range_str(range_str):
 
     See comments about match positions where RANGE_SPEC_REGEX is defined.
     """
-    # XXX parse the repeat value as well
-    
     (start, stop, step) = (None, None, 1)
     match = RANGE_SPEC_REGEX.match(range_str)
 
@@ -393,9 +385,6 @@ def _parse_range_str(range_str):
             start = groups[10] 
             stop = groups[12]
             step = groups[14]
-
-        # convert each to a number
-        (start, stop, step) = [Decimal(str(s)) for s in [start, stop, step]]
     else:
         raise SyntaxError(
             "Unable to parse range specification: '{s}'".\
@@ -415,8 +404,7 @@ def _spec_to_ranges(spec):
     ranges = []
 
     for range_str in SPEC_SEPARATOR_REGEX.split(spec):
-        (start, stop, step) = _parse_range_str(range_str)
-        ranges.append(Range(start, stop=stop, step=step))
+        ranges.append(Range(*_parse_range_str(range_str)))
 
     return ranges
 
