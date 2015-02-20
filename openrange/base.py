@@ -1,4 +1,4 @@
-"""ABC for creating cusotm interval classes."""
+"""ABC for creating custom range classes."""
 
 # ----------------------------------------------------------------------------
 
