@@ -1,4 +1,4 @@
-"""ABC for creating custom range classes."""
+"""Create custom arithmetic progression classes."""
 
 # ----------------------------------------------------------------------------
 
@@ -9,7 +9,12 @@ import random
 
 from six import add_metaclass
 
-from .shared import built_in_range
+# ----------------------------------------------------------------------------
+
+try:
+    built_in_range = xrange
+except NameError:
+    built_in_range = range
 
 # ----------------------------------------------------------------------------
 
@@ -20,17 +25,17 @@ __all__ = [
 # ----------------------------------------------------------------------------
 @add_metaclass(ABCMeta)
 class BaseRange(Sequence):
-    """Abstract base class for custom range objects.
+    """Abstract base class for custom arithmetic progressions.
 
-    This class provides an abstract interface to numeric ranges. Subclasses 
-    need only define how to convert between the type of objects within the
-    range and an underlying numeric type used for iteration.
+    Subclasses need only define how to convert between the type of objects
+    within the progression and an underlying numeric type.
 
         _item_to_num()
         _num_to_item()
 
-    In some cases, the step type may differ from the items within the range.
-    In this case, a subclass should implement the following conversion methods:
+    In some cases, the step type may differ from the items within the
+    progression.  In this case, a subclass should implement the following
+    conversion methods:
 
         _step_to_num()
         _num_to_step()
@@ -38,12 +43,11 @@ class BaseRange(Sequence):
     The default implementations of these step conversion methods assume the
     start, stop, and step are of the same type and therefore call the abstract
     _item_to_num() and _num_to_item() methods. 
-
     """
 
     # ------------------------------------------------------------------------
     def __contains__(self, item):
-        # XXX
+        """Test for inclusion of the supplied item."""
 
         num = self._item_to_num(item)
 
@@ -54,22 +58,19 @@ class BaseRange(Sequence):
 
     # ------------------------------------------------------------------------
     def __eq__(self, other):
-        """Equals comparator.
+        """Test for equality with the supplied object.
 
-        Returns:
-            bool: Whether the two objects compare as equal.
-
-        Equality is determined by comparing each object's underlying start,
-        stop, and step values numerically.
-
+        Equality is determined by numeric comparison of each object's
+        underlying start, stop, and step values.
         """
+
         return self._start == other._start and \
                self._stop == other._stop and \
                self._step == other._step
 
     # ------------------------------------------------------------------------
     def __getitem__(self, index):
-        # XXX
+        """Retrieves item(s) from the progression for a given index or slice."""
 
         if isinstance(index, slice):
             return [self._num_to_item(self[i])
@@ -79,17 +80,31 @@ class BaseRange(Sequence):
             if index < 0:
                 index += len(self)
             if index >= len(self):
-                raise IndexError("Index '{i}' is out of range.".format(i=index))
+                raise IndexError(
+                    "Index '{i}' is out of range.".format(i=index))
 
             return self._num_to_item((index * self._step) + self._start)
         else:
             raise TypeError(
-                "Invalid index type: {t}".format(t=str(type(index)))
-            )
+                "Invalid index type: {t}".format(t=str(type(index))))
 
     # ------------------------------------------------------------------------
     def __init__(self, *args):
-        # XXX
+        """Constructor. Arguments mimic python's built-in range().
+
+        Args:
+            start: first item of the progression.
+            stop: final item of the progression.
+            step: increment item
+
+        Returns:
+            BaseRange object.
+
+        Raises:
+            TypeError: if args are invalid
+            ValueError: if stop value is None
+            ValueError: if step is 0
+        """
 
         # default values for start/step
         start = 0
@@ -127,14 +142,14 @@ class BaseRange(Sequence):
 
     # ------------------------------------------------------------------------
     def __iter__(self):
-        # XXX
+        """Iterate over the progression."""
 
         for i in self._iter():
             yield self._num_to_item(i)
 
     # ------------------------------------------------------------------------
     def __len__(self):
-        # XXX        
+        """Returns the length of the progression."""
 
         # I think this works. Someone smart should review this.
         # Basically, account for rounding differences between python 2&3
@@ -150,12 +165,13 @@ class BaseRange(Sequence):
 
     # ------------------------------------------------------------------------
     def __repr__(self):
-        # XXX
+        """Official string representation of the progression."""
+
         return '{c}("{r}")'.format(c=self.__class__.__name__, r=str(self))
 
     # ------------------------------------------------------------------------
     def __reversed__(self):
-        # XXX 
+        """Returns a new instance with start, stop, and step reversed."""
 
         cls = self.__class__
         new_range = cls(self.start, self.stop, self.step)
@@ -164,9 +180,7 @@ class BaseRange(Sequence):
 
     # ------------------------------------------------------------------------
     def __str__(self):
-        # XXX 
-
-        # XXX allow empty ranges?
+        """Informal string representation of the progression."""
 
         if self._start == self._stop:
             return self.start
@@ -178,7 +192,7 @@ class BaseRange(Sequence):
         
     # ------------------------------------------------------------------------
     def index(self, item):
-        # XXX
+        """Returns the index of the first item matching the supplied item."""
 
         num = self._item_to_num(item)
 
@@ -195,7 +209,7 @@ class BaseRange(Sequence):
 
     # ------------------------------------------------------------------------
     def count(self, item):
-        # XXX
+        """Returns the number of times item appears in the progression."""
 
         if self.__contains__(item):
             return 1
@@ -204,7 +218,12 @@ class BaseRange(Sequence):
 
     # ------------------------------------------------------------------------
     def enumerate(self, start=0):
-        # XXX 
+        """Generates tuples for each item in the progression.
+
+        The tuples yielded take the form (count, item). Count starts at 0
+        unless an optional keyword argument 'start' is supplied with an
+        alternate start value.
+        """
 
         count = start
         for item in self:
@@ -213,6 +232,7 @@ class BaseRange(Sequence):
 
     # ------------------------------------------------------------------------
     def excluding(self, iterable):
+        """Iterate over progression excluding items in supplied iterable."""
 
         excludes = [self._item_to_num(i) for i in iterable]
         
@@ -229,6 +249,7 @@ class BaseRange(Sequence):
 
     # ------------------------------------------------------------------------
     def repeat(self, times=2):
+        """Iterate over the progression multiple times in sequence."""
 
         if times < 1:
             raise ValueError("Repeat value must be > 1.")
@@ -239,6 +260,7 @@ class BaseRange(Sequence):
 
     # ------------------------------------------------------------------------
     def random(self):
+        """Iterate over the items in the progression randomly."""
         for i in random.sample(list(self), len(self)):
             yield self._num_to_item(i)
 
@@ -268,6 +290,7 @@ class BaseRange(Sequence):
 
     # ------------------------------------------------------------------------
     def _iter(self):
+        """Reusable iteration method."""
 
         i = self._start
         while self._in_range(i):
@@ -277,20 +300,22 @@ class BaseRange(Sequence):
     # ------------------------------------------------------------------------
     @abstractmethod
     def _item_to_num(self, item):
-        # XXX
+        """Convert the supplied item to a numerical value."""
         pass
        
     # ------------------------------------------------------------------------
     @abstractmethod
     def _num_to_item(self, num):
-        # XXX
+        """Convert the supplied numerical value to item in the progression."""
         pass
 
     # ------------------------------------------------------------------------
     def _step_to_num(self, step):
+        """Convert supplied step item to a numeric value."""
         return self._item_to_num(step)
 
     # ------------------------------------------------------------------------
     def _num_to_step(self, num):
+        """Convert supplied numeric value to a step item."""
         return self._num_to_item(num)
 

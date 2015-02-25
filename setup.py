@@ -31,7 +31,7 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
     description="Tools for expanded numerical range processing.",
-    keywords="range ranges tools rangetool rangelist inclusive",
+    keywords="openrange range range interval progression",
     license='MIT',
     long_description=LONG_DESCRIPTION,
     name='openrange',
