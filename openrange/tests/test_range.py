@@ -104,38 +104,38 @@ class TestRange(unittest.TestCase):
 
     def test_int_repr(self):
         rng = Range(0, 10, 2)
-        self.assertEqual(repr(rng), 'Range("0-10:2")')
+        self.assertEqual(repr(rng), "Range(0, 10, 2)")
 
     def test_float_repr(self):
         rng = Range(0.1, 1., 2.)
-        self.assertEqual(repr(rng), 'Range("0.1-1.0:2.0")')
+        self.assertEqual(repr(rng), "Range(0.1, 1.0, 2.0)")
 
     def test_mixed_repr(self):
         rng = Range(0.1, 10, 2.)
-        self.assertEqual(repr(rng), 'Range("0.1-10:2.0")')
+        self.assertEqual(repr(rng), "Range(0.1, 10, 2.0)")
 
 
     # __str__ tests
 
     def test_single_int_str(self):
         rng = Range(1)
-        self.assertEqual(str(rng), "0-1")
+        self.assertEqual(str(rng), "Range(1)")
 
     def test_default_step_str(self):
         rng = Range(1, 10)
-        self.assertEqual(str(rng), "1-10")
+        self.assertEqual(str(rng), "Range(1, 10)")
 
     def test_int_str(self):
         rng = Range(0, 10, 2)
-        self.assertEqual(str(rng), "0-10:2")
+        self.assertEqual(str(rng), "Range(0, 10, 2)")
 
     def test_float_str(self):
         rng = Range(0.1, 1., 2.)
-        self.assertEqual(str(rng), "0.1-1.0:2.0")
+        self.assertEqual(str(rng), "Range(0.1, 1.0, 2.0)")
 
     def test_mixed_str(self):
         rng = Range(0.1, 10, 2.)
-        self.assertEqual(str(rng), "0.1-10:2.0")
+        self.assertEqual(str(rng), "Range(0.1, 10, 2.0)")
 
     # enumerate tests
 
@@ -148,6 +148,8 @@ class TestRange(unittest.TestCase):
         rng = Range(0, .4, .2)
         items = [i for i in rng.enumerate()]
         self.assertEqual(items, [(0, 0), (1, .2), (2, .4)])
+
+    # XXX excluding tests
 
     # first_middle_last tests
 

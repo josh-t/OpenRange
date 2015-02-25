@@ -28,17 +28,18 @@ class BaseRange(Sequence):
     """Abstract base class for custom arithmetic progressions.
 
     Subclasses need only define how to convert between the type of objects
-    within the progression and an underlying numeric type.
+    within the progression and an underlying numeric type. To do so, these
+    abstract methods must be implemented:
 
-        _item_to_num()
-        _num_to_item()
+        _item_to_num(self, item)
+        _num_to_item(self, num)
 
     In some cases, the step type may differ from the items within the
     progression.  In this case, a subclass should implement the following
     conversion methods:
 
-        _step_to_num()
-        _num_to_step()
+        _step_to_num(self, step)
+        _num_to_step(self, num)
 
     The default implementations of these step conversion methods assume the
     start, stop, and step are of the same type and therefore call the abstract
@@ -167,7 +168,21 @@ class BaseRange(Sequence):
     def __repr__(self):
         """Official string representation of the progression."""
 
-        return '{c}("{r}")'.format(c=self.__class__.__name__, r=str(self))
+        (start, stop, step) = (self.start, self.stop, self.step)
+
+        rpr = []
+        if start != 0 or step != 1:
+            rpr.append(start) 
+
+        rpr.append(stop)
+
+        if step != 1:
+            rpr.append(step)
+
+        return "{c}({r})".format(
+            c=self.__class__.__name__,
+            r=", ".join([str(s) for s in rpr]),
+        )
 
     # ------------------------------------------------------------------------
     def __reversed__(self):
@@ -182,14 +197,8 @@ class BaseRange(Sequence):
     def __str__(self):
         """Informal string representation of the progression."""
 
-        if self._start == self._stop:
-            return self.start
-        else:
-            rng_str = "{start}-{stop}".format(start=self.start, stop=self.stop)
-            if self._step != 1:
-                rng_str += ":" + str(self.step)
-            return rng_str
-        
+        return self.__repr__()
+    
     # ------------------------------------------------------------------------
     def index(self, item):
         """Returns the index of the first item matching the supplied item."""
