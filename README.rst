@@ -28,9 +28,9 @@ Contribute
 
 Contribution is welcome from those who propose new features, have ideas for improvement, or submit bug fixes. Here's a checklist for contributing to this project:
 
-#. Check for open issues or open a fresh issue to start a discussion around a feature idea or a bug. 
-#. Fork the repo on GitHub and start making your changes. 
-#. Write a test that shows the bug has been fixed or that the feature works as expected.
-#. Make sure to add yourself to **CONTRIBUTORS.rst**.
-#. Send a pull request.
+#. Open or respond to an issue to discuss a feature or bug
+#. Fork the repo on GitHub and start making changes
+#. Write test(s) for the bug or feature
+#. Add yourself to **CONTRIBUTORS.rst**
+#. Send a pull request
 
