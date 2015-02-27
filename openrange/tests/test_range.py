@@ -1,10 +1,8 @@
 import unittest
+
 from openrange import Range
 
 class TestRange(unittest.TestCase):
-
-    def setUp(self):
-        pass
 
     # __init__ tests
 
@@ -150,24 +148,6 @@ class TestRange(unittest.TestCase):
         self.assertEqual(items, [(0, 0), (1, .2), (2, .4)])
 
     # XXX excluding tests
-
-    # first_middle_last tests
-
-    def test_single_int_range(self):
-        rng = Range(42)
-        self.assertEqual(rng.first_middle_last(), (0, 21, 42))
-
-    def test_int_range(self):
-        rng = Range(0, 4, 2)
-        self.assertEqual(rng.first_middle_last(), (0, 2, 4))
-
-    def test_float_range(self):
-        rng = Range(0, .4, .2)
-        self.assertEqual(rng.first_middle_last(), (0, .2, .4))
-
-    def test_int_range_even_number_of_items(self):
-        rng = Range(0, 10, 2)
-        self.assertEqual(rng.first_middle_last(), (0, 6, 10))
 
     # reverse tests
 

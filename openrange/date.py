@@ -27,26 +27,27 @@ class _DateTypeRange(BaseRange):
     def __init__(self, start, stop, step):
         """Constructor. Start, stop, and step are required."""
 
+        for arg in (start, stop):
+            if not isinstance(arg, (date, datetime)):
+                raise TypeError(
+                    "Invalid type for start/stop argument: '{a}'".\
+                        format(a=type(arg).__name__))
+
+        if not isinstance(step, timedelta):
+            raise TypeError("Invalid type for step argument: {t}".\
+                format(t=type(step).__name__))
+
         super(_DateTypeRange, self).__init__(start, stop, step)
 
     # ------------------------------------------------------------------------
     def _item_to_num(self, item):
-        """Convert items to seconds since the epoch.
+        """Convert items to seconds since the epoch."""
         
-        Raises:
-            ValueError: If date or datetime can't be determined.
-        """
-        
-        if not isinstance(item, (date, datetime)):
-            raise ValueError(
-                "Can't determine date or datetime from: '{i}'".format(i=item)
-            )
-
         if isinstance(item, datetime):
-            seconds = (item - EPOCH).total_seconds()
+            seconds = _delta_to_seconds(item - EPOCH)
         else:
-            seconds = (datetime.combine(item, datetime.min.time()) - EPOCH).\
-                total_seconds()
+            seconds = _delta_to_seconds(
+                datetime.combine(item, datetime.min.time()) - EPOCH)
 
         return seconds
 
@@ -89,6 +90,16 @@ class TimeRange(BaseRange):
     def __init__(self, start, stop, step):
         """Constructor. Start, stop, and step are required."""
 
+        for arg in (start, stop):
+            if not isinstance(arg, time):
+                raise TypeError(
+                    "Invalid type for start/stop argument: '{a}'".\
+                        format(a=type(arg).__name__))
+
+        if not isinstance(step, timedelta):
+            raise TypeError("Invalid type for step argument: {t}".\
+                format(t=type(step).__name__))
+
         super(TimeRange, self).__init__(start, stop, step)
 
         # account for day change
@@ -100,9 +111,6 @@ class TimeRange(BaseRange):
     # ------------------------------------------------------------------------
     def _item_to_num(self, item):
         """Convert time object to seconds."""
-
-        if not isinstance(item, time):
-            raise ValueError("Time value must be of type: 'datetime.time'")
 
         return _delta_to_seconds(timedelta(hours=item.hour)) + \
                _delta_to_seconds(timedelta(minutes=item.minute)) + \
@@ -132,9 +140,7 @@ class TimeRange(BaseRange):
 def _delta_to_seconds(delta):
     """Converts timedelta object to seconds."""
 
-    if not isinstance(delta, timedelta):
-        raise ValueError("Invalid type for 'delta' argument: {t}".format(
-            t=type(delta).__name__))
+    # using this instead of delta.total_seconds() to support python 2.6
+    return int((delta.microseconds + 
+        (delta.seconds + delta.days * 24 * 3600) * 10**6) / 10**6)
 
-    return int(delta.total_seconds())
-    

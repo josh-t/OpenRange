@@ -136,11 +136,6 @@ class BaseRange(Sequence):
         self._stop = self._item_to_num(stop)
         self._step = step
 
-        if self._step > 0:
-            self._in_range = lambda i: i >= self._start and i <= self._stop
-        else:
-            self._in_range = lambda i: i <= self._start and i >= self._stop
-
     # ------------------------------------------------------------------------
     def __iter__(self):
         """Iterate over the progression."""
@@ -152,17 +147,7 @@ class BaseRange(Sequence):
     def __len__(self):
         """Returns the length of the progression."""
 
-        # I think this works. Someone smart should review this.
-        # Basically, account for rounding differences between python 2&3
-        # by using the decimal module and specifying the rounding method.
-        diff = self._stop - self._start
-        num_items = Decimal(str(diff / self._step)).quantize(
-            Decimal('1'), rounding=ROUND_HALF_UP)
-        
-        if diff % self._step == 0:
-            num_items += 1
-
-        return int(num_items)
+        return int((self._stop - self._start) / self._step) + 1
 
     # ------------------------------------------------------------------------
     def __repr__(self):
@@ -250,13 +235,6 @@ class BaseRange(Sequence):
                 yield self._num_to_item(i)
 
     # ------------------------------------------------------------------------
-    def first_middle_last(self):
-        """Returns the first, middle, and last items of this range."""
-
-        mid_index = int(len(self) / 2)
-        return (self[0], self[mid_index], self[-1])
-
-    # ------------------------------------------------------------------------
     def repeat(self, times=2):
         """Iterate over the progression multiple times in sequence."""
 
@@ -327,4 +305,13 @@ class BaseRange(Sequence):
     def _num_to_step(self, num):
         """Convert supplied numeric value to a step item."""
         return self._num_to_item(num)
+
+
+    # ------------------------------------------------------------------------
+    def _in_range(self, num):
+
+        if self._step > 0:
+            return num >= self._start and num <= self._stop
+        else:
+            return num <= self._start and num >= self._stop
 
