@@ -14,7 +14,8 @@ Support
 
 **OpenRange** is tested against:
 
-* 2.6, 2.7, 3.2, 3.3, 3.4, pypy, pypy3
+* python 2.6, 2.7, 3.2, 3.3, 3.4,
+* pypy & pypy3
 
 Installation
 ============
