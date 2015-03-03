@@ -1,20 +1,20 @@
-.. openrange documentation master file, created by
-   sphinx-quickstart on Sat Jan 31 10:59:16 2015.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
 
-Welcome to openrange's documentation!
-======================================
+#########
+OpenRange
+#########
 
-Contents:
+**OpenRange** provides a simple interface for building custom arithmetic
+progression objects. Basically, you can quickly create range-like generators
+for any objects that can be represented numerically. 
 
-.. toctree::
-   :maxdepth: 2
+.. toctree:: 
+    :maxdepth: 2
 
-
+    baserange
+    examples
 
 Indices and tables
-==================
+^^^^^^^^^^^^^^^^^^
 
 * :ref:`genindex`
 * :ref:`modindex`

@@ -21,7 +21,7 @@ class _DateTypeRange(BaseRange):
     """Base class for date/datetime range classes."""
 
     # Set the data type for this object.
-    date_type = None
+    _date_type = None
 
     # ------------------------------------------------------------------------
     def __init__(self, start, stop, step):
@@ -55,7 +55,7 @@ class _DateTypeRange(BaseRange):
     def _num_to_item(self, num):
         """Convert seconds to a date/datetime object."""
 
-        fts = getattr(self.__class__.date_type, 'fromtimestamp')
+        fts = getattr(self.__class__._date_type, 'fromtimestamp')
         return fts(num)
 
     # ------------------------------------------------------------------------
@@ -74,13 +74,13 @@ class _DateTypeRange(BaseRange):
 class DateRange(_DateTypeRange):
     """Date object progression."""
 
-    date_type = date
+    _date_type = date
 
 # ----------------------------------------------------------------------------
 class DatetimeRange(_DateTypeRange):
     """Datetime object progression."""
 
-    date_type = datetime
+    _date_type = datetime
 
 # ----------------------------------------------------------------------------
 class TimeRange(BaseRange):
