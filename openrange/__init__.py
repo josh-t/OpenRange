@@ -2,8 +2,6 @@
 from pkg_resources import get_distribution, DistributionNotFound
 
 from .base import BaseRange
-from .date import DateRange, DatetimeRange, TimeRange
-from .range_ import Range
 
 # ----------------------------------------------------------------------------
 

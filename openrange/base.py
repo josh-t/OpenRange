@@ -4,7 +4,6 @@
 
 from abc import ABCMeta, abstractmethod
 from collections import Sequence
-from decimal import Decimal, ROUND_HALF_UP
 import random
 
 from six import add_metaclass
@@ -61,13 +60,28 @@ class BaseRange(Sequence):
     def __eq__(self, other):
         """Test for equality with the supplied object.
 
-        Equality is determined by numeric comparison of each object's
-        underlying start, stop, and step values.
+        **Note**: This method may require evaluation of all items in each list.
         """
 
-        return self._start == other._start and \
-               self._stop == other._stop and \
-               self._step == other._step
+        _len = len(self)
+        
+        if _len != len(other):
+            return False
+
+        for i in built_in_range(0, _len):
+            if self[i] != other[i]:
+                return False
+
+        return True
+
+    # ------------------------------------------------------------------------
+    def __ne__(self, other):
+        """Test for inequality with the supplied object.
+
+        **Note**: This method may require evaluation of all items in each list.
+        """
+
+        return not self.__eq__(other)
 
     # ------------------------------------------------------------------------
     def __getitem__(self, index):
@@ -134,11 +148,12 @@ class BaseRange(Sequence):
 
         self._start = self._item_to_num(start)
         self._stop = self._item_to_num(stop)
+
         self._step = step
 
     # ------------------------------------------------------------------------
     def __iter__(self):
-        """Iterate over the progression."""
+        """Generates all items in the progression."""
 
         for i in self._iter():
             yield self._num_to_item(i)
@@ -247,7 +262,11 @@ class BaseRange(Sequence):
 
     # ------------------------------------------------------------------------
     def random(self):
-        """Iterate over the items in the progression randomly."""
+        """Generate the items in the progression in a random order.
+        
+        **Note**: This method requires evaluation of all items in the 
+        progression before the first item is generated.
+        """
         for i in random.sample(list(self), len(self)):
             yield self._num_to_item(i)
 
@@ -288,13 +307,11 @@ class BaseRange(Sequence):
     @abstractmethod
     def _item_to_num(self, item):
         """Convert the supplied item to a numerical value."""
-        pass
        
     # ------------------------------------------------------------------------
     @abstractmethod
     def _num_to_item(self, num):
         """Convert the supplied numerical value to item in the progression."""
-        pass
 
     # ------------------------------------------------------------------------
     def _step_to_num(self, step):

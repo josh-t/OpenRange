@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import unittest
 
-from openrange import DatetimeRange
+from openrange.date import DatetimeRange
 
 class TestDatetimeRange(unittest.TestCase):
 

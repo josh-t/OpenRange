@@ -8,6 +8,11 @@ from setuptools import setup, find_packages
 
 # -----------------------------------------------------------------------------
 
+DESCRIPTION = "OpenRange provides a simple interface for building " + \
+              "custom arithmetic progression objects. Quickly create " + \
+              "range-like generators for any objects that can be " + \
+              "represented numerically." 
+
 # path to this file's directory
 PROJECT_ROOT = path.normpath(path.join(path.abspath(__file__), pardir))
 
@@ -30,7 +35,7 @@ setup(
         "Programming Language :: Python :: 2.7",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
-    description="Quickly implement custom arithmetic progressions. Comes with examples and prepackaged, possibly useful implementations.",
+    description=DESCRIPTION,
     keywords="openrange range interval progression",
     license='MIT',
     long_description=LONG_DESCRIPTION,

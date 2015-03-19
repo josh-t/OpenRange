@@ -1,6 +1,6 @@
 import unittest
 
-from openrange import Range
+from openrange.range_ import Range
 
 class TestRange(unittest.TestCase):
 
@@ -89,7 +89,7 @@ class TestRange(unittest.TestCase):
 
     def test_equals(self):
         rng1 = Range(0, 10, 2)
-        rng2 = Range(0, 10, 2)
+        rng2 = Range(0, 11, 2)
         rng3 = Range(0.0, 10.0, 2.0)
         rng4 = Range(0.1, 10, 2.0)
         rng5 = Range(10, 0, -2)
@@ -97,6 +97,19 @@ class TestRange(unittest.TestCase):
         self.assertTrue(rng1 == rng3)
         self.assertFalse(rng1 == rng4)
         self.assertFalse(rng1 == rng5)
+
+    # __ne__ tests
+
+    def test_not_equals(self):
+        rng1 = Range(1, 9, 2)
+        rng2 = Range(1, 10, 2)
+        rng3 = Range(1.0, 9.0, 2.0)
+        rng4 = Range(0.1, 10, 2.0)
+        rng5 = Range(9, 1, -2)
+        self.assertFalse(rng1 != rng2)
+        self.assertFalse(rng1 != rng3)
+        self.assertTrue(rng1 != rng4)
+        self.assertTrue(rng1 != rng5)
         
     # __repr__ tests
 
