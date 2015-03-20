@@ -1,3 +1,6 @@
+.. image:: https://readthedocs.org/projects/openrange/badge/
+    :target: https://readthedocs.org/projects/openrange/
+    :alt: Documentation Status
 
 OpenRange
 =========
