@@ -1,6 +1,6 @@
 import unittest
 
-from openrange.range_ import Range
+from openrange.rng import Range
 
 class TestRange(unittest.TestCase):
 
@@ -160,7 +160,7 @@ class TestRange(unittest.TestCase):
         items = [i for i in rng.enumerate()]
         self.assertEqual(items, [(0, 0), (1, .2), (2, .4)])
 
-    # XXX excluding tests
+    # TODO: excluding tests
 
     # reverse tests
 
@@ -230,7 +230,7 @@ class TestRange(unittest.TestCase):
         self.assertEqual(rng[3], .7)
         self.assertEqual(rng[4], .9)
 
-    # XXX negative indexes, slice objects
+    # TODO: negative indexes, slice objects
 
     # __len__ tests
 

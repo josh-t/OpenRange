@@ -1,38 +1,44 @@
-** WIP **
 
 OpenRange
 =========
 
-Quickly implement custom arithmetic progressions. Comes with examples and prepackaged, possibly useful implementations.
+**OpenRange** provides a simple interface for building custom range-like 
+objects for any type that can be represented numerically. 
 
 Documentation
 =============
 
 ***TODO***: Insert a link to read the docs page.
 
+.. @divider@
+
+Installation
+============
+
+**OpenRange** is easy to install using pip. 
+
+.. code-block:: bash
+
+    $ pip install openrange
+
 Support
 =======
 
 **OpenRange** is tested against:
 
-* python 2.6, 2.7, 3.2, 3.3, 3.4
-* pypy & pypy3
+* python ``2.6``, ``2.7``, ``3.2``, ``3.3``, ``3.4``
+* ``pypy`` and ``pypy3``
 
-Installation
-============
-
-.. code-block:: bash
-
-    $ pip install openrange
+Primary development and testing were for python ``2.7``.
 
 Contribute
 ==========
 
 Contribution is welcome from those who propose new features, have ideas for improvement, or submit bug fixes. Here's a checklist for contributing to this project:
 
-#. Open or respond to an issue to discuss a feature or bug
-#. Fork the repo on GitHub and start making changes
-#. Write test(s) for the bug or feature
-#. Add yourself to **CONTRIBUTORS.rst**
-#. Send a pull request
+* Open or respond to an issue to discuss a feature or bug
+* Fork the repo on GitHub and start making changes
+* Write test(s) for the bug or feature
+* Add yourself to **CONTRIBUTORS.rst**
+* Send a pull request
 

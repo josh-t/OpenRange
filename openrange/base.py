@@ -264,11 +264,10 @@ class BaseRange(Sequence):
     def random(self):
         """Generate the items in the progression in a random order.
         
-        **Note**: This method requires evaluation of all items in the 
-        progression before the first item is generated.
         """
-        for i in random.sample(list(self), len(self)):
-            yield self._num_to_item(i)
+        # randomize the indecies, then yield the corresponding item
+        for i in random.sample(built_in_range(0, len(self)), len(self)):
+            yield self[i]
 
     # ------------------------------------------------------------------------
     def reverse(self):

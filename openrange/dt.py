@@ -13,22 +13,19 @@ __all__ = [
     'TimeRange',
 ]
 
-# epoch relative to local time
+# epoch relative to local time.
 EPOCH = datetime.fromtimestamp(mktime(localtime(0)))
 
 # ----------------------------------------------------------------------------
-class _DateTypeRange(BaseRange):
-    """Base class for date/datetime range classes."""
-
-    # Set the data type for this object.
-    _date_type = None
+class DateRange(BaseRange):
+    """Date object progression."""
 
     # ------------------------------------------------------------------------
     def __init__(self, start, stop, step):
         """Constructor. Start, stop, and step are required."""
 
         for arg in (start, stop):
-            if not isinstance(arg, (date, datetime)):
+            if not isinstance(arg, date):
                 raise TypeError(
                     "Invalid type for start/stop argument: '{a}'".\
                         format(a=type(arg).__name__))
@@ -37,50 +34,72 @@ class _DateTypeRange(BaseRange):
             raise TypeError("Invalid type for step argument: {t}".\
                 format(t=type(step).__name__))
 
-        super(_DateTypeRange, self).__init__(start, stop, step)
+        super(DateRange, self).__init__(start, stop, step)
 
     # ------------------------------------------------------------------------
     def _item_to_num(self, item):
         """Convert items to seconds since the epoch."""
-        
-        if isinstance(item, datetime):
-            seconds = _delta_to_seconds(item - EPOCH)
-        else:
-            seconds = _delta_to_seconds(
-                datetime.combine(item, datetime.min.time()) - EPOCH)
-
+        seconds = _delta_to_seconds(
+            datetime.combine(item, datetime.min.time()) - EPOCH)
         return seconds
 
     # ------------------------------------------------------------------------
     def _num_to_item(self, num):
-        """Convert seconds to a date/datetime object."""
-
-        fts = getattr(self.__class__._date_type, 'fromtimestamp')
-        return fts(num)
+        """Convert seconds to a date object."""
+        return date.fromtimestamp(num)
 
     # ------------------------------------------------------------------------
     def _step_to_num(self, step):
         """Convert timedelta step to seconds."""
-
         return _delta_to_seconds(step)
 
     # ------------------------------------------------------------------------
     def _num_to_step(self, num):
         """Convert seconds to timedelta object."""
-        
         return timedelta(seconds=num)
 
 # ----------------------------------------------------------------------------
-class DateRange(_DateTypeRange):
-    """Date object progression."""
-
-    _date_type = date
-
-# ----------------------------------------------------------------------------
-class DatetimeRange(_DateTypeRange):
+class DatetimeRange(BaseRange):
     """Datetime object progression."""
 
-    _date_type = datetime
+    # ------------------------------------------------------------------------
+    def __init__(self, start, stop, step):
+        """Constructor. Start, stop, and step are required."""
+
+        for arg in (start, stop):
+            if not isinstance(arg, datetime):
+                raise TypeError(
+                    "Invalid type for start/stop argument: '{a}'".\
+                        format(a=type(arg).__name__))
+
+        if not isinstance(step, timedelta):
+            raise TypeError("Invalid type for step argument: {t}".\
+                format(t=type(step).__name__))
+
+        super(DatetimeRange, self).__init__(start, stop, step)
+
+    # ------------------------------------------------------------------------
+    def _item_to_num(self, item):
+        """Convert items to seconds since the epoch."""
+        
+        seconds = _delta_to_seconds(item - EPOCH)
+        return seconds
+
+    # ------------------------------------------------------------------------
+    def _num_to_item(self, num):
+        """Convert seconds to a datetime object."""
+
+        return datetime.fromtimestamp(num)
+
+    # ------------------------------------------------------------------------
+    def _step_to_num(self, step):
+        """Convert timedelta step to seconds."""
+        return _delta_to_seconds(step)
+
+    # ------------------------------------------------------------------------
+    def _num_to_step(self, num):
+        """Convert seconds to timedelta object."""
+        return timedelta(seconds=num)
 
 # ----------------------------------------------------------------------------
 class TimeRange(BaseRange):

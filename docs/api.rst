@@ -1,4 +1,8 @@
 
+.. toctree::
+    :maxdepth: 3
+    :hidden:
+
 ###
 API
 ###
@@ -14,20 +18,16 @@ BaseRange
 Range
 #####
 
-.. automodule:: openrange.range_
+.. automodule:: openrange.rng
     :members:
     :undoc-members:
     :show-inheritance:
 
-Date Ranges
-###########
+``datetime`` Ranges
+###################
 
-.. automodule:: openrange.date
+.. automodule:: openrange.dt
     :members:
     :undoc-members:
     :show-inheritance:
-
-.. toctree::
-    :maxdepth: 3
-    :hidden:
 
