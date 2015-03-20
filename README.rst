@@ -1,3 +1,6 @@
+.. image:: https://travis-ci.org/josh-t/OpenRange.svg
+    :target: https://travis-ci.org/josh-t/OpenRange
+
 .. image:: https://readthedocs.org/projects/openrange/badge/
     :target: https://readthedocs.org/projects/openrange/
     :alt: Documentation Status
