@@ -8,7 +8,7 @@ objects for any type that can be represented numerically.
 Documentation
 =============
 
-***TODO***: Insert a link to read the docs page.
+See the full documentation: `openrange.readthedocs.org <http://openrange.readthedocs.org/>`_
 
 .. @divider@
 
