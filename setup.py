@@ -43,6 +43,6 @@ setup(
     name='openrange',
     packages=find_packages(),
     url="https://github.com/josh-t/openrange",
-    version='1.0.0',
+    version='1.1.0',
 )
 
