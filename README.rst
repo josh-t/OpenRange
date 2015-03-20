@@ -29,7 +29,7 @@ Support
 
 **OpenRange** is tested against:
 
-* python ``2.6``, ``2.7``, ``3.2``, ``3.3``, ``3.4``
+* python ``2.7``, ``3.2``, ``3.3``, ``3.4``
 * ``pypy`` and ``pypy3``
 
 Primary development and testing were for python ``2.7``.

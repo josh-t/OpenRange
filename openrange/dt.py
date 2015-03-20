@@ -160,6 +160,5 @@ def _delta_to_seconds(delta):
     """Converts timedelta object to seconds."""
 
     # using this instead of delta.total_seconds() to support python 2.6
-    return int((delta.microseconds + 
-        (delta.seconds + delta.days * 24 * 3600) * 10**6) / 10**6)
+    return int(delta.total_seconds())
 
