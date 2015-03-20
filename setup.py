@@ -36,6 +36,7 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
     description=DESCRIPTION,
+    install_requires=['six>=1.9'],
     keywords="openrange range interval progression",
     license='MIT',
     long_description=LONG_DESCRIPTION,
